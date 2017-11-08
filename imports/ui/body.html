@@ -1,0 +1,22 @@
+<body>
+    <div class="container">
+        <header>
+            <h1>Game List</h1>
+        </header>
+        <form class="new-game">
+            <button id="makeNewGame ">Start a game</button>
+        </form>
+        <ul>
+            {{#each games}} {{> game}} {{/each}}
+        </ul>
+
+        <p>{{asimplemessage}}</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+</body>
+
