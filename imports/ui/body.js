@@ -29,9 +29,6 @@ Template.body.events({
       gameid,
       createdAt: new Date(), // current time
     });
- 
-    // Clear form
-    target.text.value = '';
   },
 });
 
@@ -39,9 +36,7 @@ Template.body.helpers({
   games() {
     return Games.find({}, {sort: {createdAt: -1}});
   },
-});
-Template.body.helpers({
-  asimplemessage() {
-    return "BLAH";
-  },
+  anyGamesExist() {
+    return Games.find().count() > 0;
+  }
 });
