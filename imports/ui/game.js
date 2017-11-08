@@ -7,4 +7,8 @@ Template.game.events({
   'click .delete'() {
     Games.remove(this._id);
   },
+  'click .join'() {
+    
+  },
 });
+
