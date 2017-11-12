@@ -105,6 +105,7 @@
     <button class="btn-start">{{_ "ui.start game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
   </div>
+  {{> addTestPlayers}}
 </template>
 
 <template name="gameView">
@@ -132,7 +133,7 @@
   <ul class="ingame-player-list">
     {{#each players }}
     <li>
-      <div class="player-name">
+      <div class="player-name">{{name}}
       </div>
     </li>
     {{/each}}

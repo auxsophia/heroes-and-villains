@@ -3,6 +3,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import './heroes-villains.html';
 import './end-game.html';
+import './test-helpers.html';
 import './templates/day-phase.html';
 
 Handlebars.registerHelper('toCapitalCase', function (str) {
@@ -131,7 +132,7 @@ function generateNewGame(){
   return game;
 }
 
-function generateNewPlayer(game, name){
+generateNewPlayer = function (game, name){
   var player = {
     gameID: game._id,
     name: name,
@@ -237,6 +238,8 @@ Template.main.rendered = function() {
     return (adsbygoogle = window.adsbygoogle || []).push({});
   });
 };
+
+
 
 Template.main.helpers({
   whichView: function() {
