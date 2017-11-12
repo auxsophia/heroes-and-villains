@@ -3,6 +3,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import './heroes-villains.html';
 import './end-game.html';
+import './templates/day-phase.html';
 
 Handlebars.registerHelper('toCapitalCase', function (str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -554,4 +555,9 @@ Template.gameView.events({
   'click .location-name-striked': function(event) {
     event.target.className = 'location-name';
   }
+  //Test
+  ,'click .btn-test': function (event) {
+    Session.set('currentView', 'dayPhase');
+  }
+  //Test End
 });

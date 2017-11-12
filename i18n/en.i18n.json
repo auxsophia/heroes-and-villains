@@ -24,7 +24,9 @@
         "enter an access code": "Enter an access code",
         "invalid access code": "Sorry, no game was found with the access code you provided!",
         "join": "Join",
-        "footer": "Based on the games Mafia and Werewolf"
+        "footer": "Based on the games Mafia and Werewolf",
+        "vote": "Vote!",
+        "dayPhaseHeader": "Day Phase"
     }
     
 }
