@@ -100,12 +100,16 @@
   </ol>
 
   <hr>
-
-  <div class="button-container">
-    <button class="btn-start">{{_ "ui.start game" }}</button>
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
-  </div>
-  {{> addTestPlayers}}
+    <div class="game-options">
+      <button class="increase-villains">+</button>
+      <input class="villain-count" disabled value="{{villainCount}}" type="text" />
+      <button class="decrease-villains">-</button>
+    </div>
+    <div class="button-container">
+      <button class="btn-start">{{_ "ui.start game" }}</button>
+      <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    </div>
+    {{> addTestPlayers}}
 </template>
 
 <template name="gameView">
