@@ -45,7 +45,7 @@ function assignRoles(players, location) {
   var role = null;
 
   players.forEach(function (player) {
-    if (!player.isSpy) {
+    if (!player.isVillain) {
       role = shuffled_roles.pop();
 
       if (role === undefined) {
@@ -57,6 +57,26 @@ function assignRoles(players, location) {
           role: role
         }
       });
+
+      if (role === 'locations.roles.herobase.guardian') {
+        Players.update(player._id, {
+          $set: {
+            isGuardian: true,
+            isTelepath: false,
+            isVillain: false
+          }
+        });
+      }
+
+      if (role === 'locations.roles.herobase.telepath') {
+        Players.update(player._id, {
+          $set: {
+            isTelepath: true,
+            isGuardian: false,
+            isVillain: false
+          }
+        });
+      }
     }
   });
 }
@@ -88,12 +108,25 @@ Games.find({
   "state": 'settingUp'
 }).observeChanges({
   added: function (id, game) {
-    var location = getRandomLocation();
+    // We want our game to always get the first location, which is the hero 'homebase'
+    var location = locations[0]; //getRandomLocation();
     var players = Players.find({
       gameID: id
     });
     var gameEndTime = moment().add(game.lengthInMinutes, 'minutes').valueOf();
-    console.log("player count");
+
+    var villainIndex = Math.floor(Math.random() * players.count());
+    console.log(villainIndex);
+
+    players.forEach(function(player, index){
+      Players.update(player._id, {$set: {
+        isVillain: index === villainIndex,
+        isGuardian: false,
+        isTelepath: false
+      }});
+    });
+
+    /*console.log("player count");
     console.log(players.count());
     var bucket = [];
     for (var i = 0; i < players.count(); i++) {
@@ -117,9 +150,9 @@ Games.find({
           isPlainHero: index !== telepathIndex && index !== guardianIndex && index !== villainIndex && index !== villainIndex2
         }
       });
-    });
+    });*/
 
-    // assignRoles(players, location);
+    assignRoles(players, location);
 
     Games.update(id, {
       $set: {

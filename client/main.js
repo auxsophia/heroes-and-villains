@@ -136,7 +136,7 @@ generateNewPlayer = function (game, name){
     gameID: game._id,
     name: name,
     role: null,
-    isSpy: false,
+    isVillain: false,
     isFirstPlayer: false
   };
 
