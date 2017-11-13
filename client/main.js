@@ -564,3 +564,41 @@ Template.gameView.events({
   }
   //Test End
 });
+
+
+
+
+
+
+/*
+      day-phase start
+*/
+
+Template.dayPhase.helpers({
+  players: function () {
+    var game = getCurrentGame();
+    var currentPlayer = getCurrentPlayer();
+
+    if (!game) {
+      return null;
+    }
+
+    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+
+    players.forEach(function(player){
+      if (player._id === currentPlayer._id){
+        player.isCurrent = true;
+      }
+    });
+
+    return players;
+  },
+  isLoading: function() {
+    var game = getCurrentGame();
+    return game.state === '';
+  }
+});
+
+/*
+      day-phase end
+*/
