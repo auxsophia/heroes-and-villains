@@ -120,6 +120,7 @@ function generateNewGame() {
     accessCode: generateAccessCode(),
     state: "waitingForPlayers",
     location: null,
+    currentPhase: "preStart",
     lengthInMinutes: 8,
     villainCount: 3,
     endTime: null,
@@ -176,8 +177,10 @@ function trackGameState() {
     return;
   }
 
-  if (game.state === "inProgress") {
-    Session.set("currentView", "gameView");
+  if (game.state === "roleView") {
+    Session.set("currentView", "roleView");
+  } else if (game.state === "nightPhaseVillain") {
+    Session.set("currentView", "nightPhaseVillain");
   } else if (game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
   }
@@ -317,7 +320,6 @@ Template.createGame.events({
 
       Session.set("gameID", game._id);
       Session.set("playerID", player._id);
-      Session.set("moderator", true);
       Session.set("currentView", "lobby");
     });
 
@@ -509,7 +511,29 @@ function getTimeRemaining() {
   return timeRemaining;
 }
 
-Template.gameView.helpers({
+function goToNight() {
+  console.log("setting night phase");
+  game = getCurrentGame();
+  Games.update(game._id,{
+    $set: {
+      state: 'nightPhaseVillain'
+    }
+  });
+}
+
+Template.roleView.helpers({
+  isModerator: function() {
+    game = getCurrentGame();
+    return getCurrentPlayer()._id == game.moderator;;
+  }
+})
+
+Template.roleView.events({
+  "click .btn-lets-play": goToNight,
+
+})
+
+Template.nightPhaseVillain.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
   players: function () {
@@ -540,7 +564,7 @@ Template.gameView.helpers({
   }
 });
 
-Template.gameView.events({
+Template.nightPhaseVillain.events({
   'click .btn-leave': leaveGame,
   'click .btn-end': function () {
     GAnalytics.event("game-actions", "gameend");

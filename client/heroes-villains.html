@@ -112,23 +112,33 @@
     {{> addTestPlayers}}
 </template>
 
-<template name="gameView">
+<template name="roleView">
+  <h3>{{_ "ui.game has started"}}</h3>
+  <h4>{{_ "ui.you are a"}} {{_ "ui.telepath hero"}}</h4>
+  <p>{{_ "ui.hero instructions"}}</p>
+  <p>{{_ "ui.telepath instructions"}}</p>
+  {{#if isModerator}}
+  <button class="btn-lets-play">{{_ "ui.lets play"}}</button>
+  {{/if}}
+</template>
+
+<template name="nightPhaseVillain">
   <h4>
-    <a class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a>
+  It is night...
   </h4>
 
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
 
-    <div class="status-container-content">
+    <div class="status-container-content">{{_ "ui.you are a"}}
       {{#if player.isVillain }}
-      <div class="player-status player-status-spy">{{_ "ui.you are a villain" }}</div>
+      <div class="player-status player-status-spy">{{_ "ui.villain" }}</div>
       {{/if}} {{#if player.isTelepath }}
-      <div class="player-status player-status-not-spy">{{{_ "ui.you are a telepath hero" }}}</div>
+      <div class="player-status player-status-not-spy">{{{_ "ui.telepath hero" }}}</div>
       {{/if}} {{#if player.isGuardian }}
-      <div class="player-status player-status-not-spy">{{{_ "ui.you are a guardian hero" }}}</div>
+      <div class="player-status player-status-not-spy">{{{_ "ui.guardian hero" }}}</div>
       {{/if}} {{#if player.isPlainHero }}
-      <div class="player-status player-status-not-spy">{{{_ "ui.you are a plain hero" }}}</div>
+      <div class="player-status player-status-not-spy">{{{_ "ui.plain hero" }}}</div>
       {{/if}}
     </div>
   </div>

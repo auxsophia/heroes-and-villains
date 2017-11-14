@@ -123,7 +123,7 @@ Games.find({
 
     Games.update(id, {
       $set: {
-        state: 'inProgress',
+        state: 'roleView',
         location: location,
         endTime: gameEndTime,
         paused: false,
