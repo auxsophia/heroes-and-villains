@@ -140,7 +140,9 @@ generateNewPlayer = function (game, name) {
     name: name,
     role: null,
     isSpy: false,
-    isFirstPlayer: false
+    isFirstPlayer: false,
+    suspicionScoreCount: 0,
+    alive: true
   };
 
   var playerID = Players.insert(player);
@@ -638,7 +640,25 @@ Template.dayPhase.helpers({
   isLoading: function () {
     var game = getCurrentGame();
     return game.state === '';
+  },
+  suspicionScoreCount: function () {
+    var player = getCurrentPlayer();
+    console.log("day phase log");
+    return player.suspicionScoreCount;
   }
+});
+
+Template.dayPhase.events({
+  'change input:radio[name=player]': function () {
+
+    var selectedPlayerID = $(this)[0]._id;//.closest('input:hidden[name=player-id]')[0]._id;
+    console.log(selectedPlayerID);
+    var player = Players.findOne(selectedPlayerID);
+    console.log(player);
+    Players.update(player._id, {
+      $set: { suspicionScoreCount: player.suspicionScoreCount + 1 },
+    });
+  },
 });
 
 /*

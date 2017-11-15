@@ -32,7 +32,9 @@
         "join": "Join",
         "footer": "Based on the games Mafia and Werewolf",
         "vote": "Vote!",
-        "dayPhaseHeader": "Day Phase"
+        "dayPhaseHeader": "Day Phase",
+        "suspicionScoreLabel": "Suspicion Score"
+
     }
     
 }

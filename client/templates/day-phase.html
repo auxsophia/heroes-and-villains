@@ -4,6 +4,7 @@
       <span class="spinner"></span>
       {{else}} {{_ "ui.dayPhaseHeader" }} {{/if}}
     </h4>
+    {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
   
     <hr>
   
@@ -15,18 +16,11 @@
           {{#each players }}
           <li>
             <div class="player-name">
-                {{ name }} 
-            </div>
-            <div>
-                <input type="radio">
+              <input type="hidden" name="player-id" value="{{_id}}"><input type="radio" name="player">  {{ name }}
             </div>
           </li>
           {{/each}}
         </ul>
-        <div class="button-container">
-          <input type="submit" value='{{_ "ui.vote" }}'>
-          <!--<button class="btn-back">{{_ "ui.back" }}</button>-->
-        </div>
       </div>
     </form>
   </template>
