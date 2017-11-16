@@ -13,12 +13,9 @@
         "your role": "Your role: ",
         "you are a": "You are a",
         "villain": "Villain",
-        "plain hero": "Plain Hero",
-        "guardian hero": "Guardian Hero",
-        "telepath hero": "Telepath Hero",
-        "hero instructions": "You are a hero, try to lock up the villains before they kill all the heroes",
-        "telepath instructions": "As a Telepath, you will be able to investigate a player each night and learn whether they are a hero or are a villain.",
-        "guardian instructions": "As a Guardian, you will can protect a player from an attack each night.",
+        "hero": "Plain Hero",
+        "guardian": "Guardian Hero",
+        "telepath": "Telepath Hero",
         "lets play": "Lets Play!",
         "players": "Players",
         "first": "1<span>st</span>",
@@ -34,7 +31,15 @@
         "vote": "Vote!",
         "dayPhaseHeader": "Day Phase",
         "suspicionScoreLabel": "Suspicion Score"
-
+        
+    },
+    "instructions":
+    {
+        "hero": "You are a hero, try to lock up the villains before they kill all the heroes",
+        "telepath": "As a Telepath Hero, you will be able to investigate a player each night and learn whether they are a hero or are a villain.",
+        "guardian": "As a Guardian Hero, you will can protect a player from an attack each night.",
+        "villain": "Your job is to kill all the heros at night, while pretending to be one of them during the day"
     }
+    
     
 }

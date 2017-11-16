@@ -114,9 +114,8 @@
 
 <template name="roleView">
   <h3>{{_ "ui.game has started"}}</h3>
-  <h4>{{_ "ui.you are a"}} {{_ "ui.telepath hero"}}</h4>
-  <p>{{_ "ui.hero instructions"}}</p>
-  <p>{{_ "ui.telepath instructions"}}</p>
+  <h4>{{_ "ui.you are a"}} {{_ (concat "ui." player.role)}}</h4>
+  <p>{{_ (concat "instructions." player.role)}}</p>
   {{#if isModerator}}
   <button class="btn-lets-play">{{_ "ui.lets play"}}</button>
   {{/if}}
@@ -130,7 +129,9 @@
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
-      <div class="player-status player-status-spy">{{ player.role }}</div>
+      <div class="player-status">
+        {{_ (concat "ui." player.role)}}
+      </div>
 
     </div>
   </div>
@@ -139,7 +140,7 @@
   <ul class="ingame-player-list">
     {{#each players }}
     <li>
-      <div class="player-name">{{name}} ({{role}})
+      <div class="player-name">{{name}} ({{_ (concat "ui." role)}})
       </div>
     </li>
     {{/each}}
@@ -171,7 +172,7 @@
   <h4>
     {{#if isLoading }}
     <span class="spinner"></span>
-    {{else}} {{_ "ui.welcome to heroes and villains" }} {{/if}}
+    {{else}}{{_ "ui.welcome to heroes and villains" }} {{/if}}
   </h4>
 
   <hr>

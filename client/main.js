@@ -276,6 +276,10 @@ Template.footer.events({
   }
 })
 
+Template.registerHelper( 'concat', ( string1, string2 ) => {
+  return string1 + string2;
+});
+
 Template.startMenu.events({
   'click #btn-new-game': function () {
     Session.set("currentView", "createGame");
@@ -527,7 +531,8 @@ Template.roleView.helpers({
   isModerator: function() {
     game = getCurrentGame();
     return getCurrentPlayer()._id == game.moderator;;
-  }
+  },
+  player: getCurrentPlayer
 })
 
 Template.roleView.events({
