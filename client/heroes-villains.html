@@ -132,13 +132,23 @@
 
     <div class="status-container-content">{{_ "ui.you are a"}}
       {{#if player.isVillain }}
+<<<<<<< HEAD
       <div class="player-status player-status-spy">{{_ "ui.villain" }}</div>
+=======
+      <div class="player-status player-status-spy">{{_ "ui.you are a villain" }}</div>
+      {{else}} <!--{{#if not player.isVillain }} -->
+      <div class="player-status player-status-not-spy">{{{_ "ui.you are a plain hero" }}}</div>
+>>>>>>> ellBranch
       {{/if}} {{#if player.isTelepath }}
       <div class="player-status player-status-not-spy">{{{_ "ui.telepath hero" }}}</div>
       {{/if}} {{#if player.isGuardian }}
+<<<<<<< HEAD
       <div class="player-status player-status-not-spy">{{{_ "ui.guardian hero" }}}</div>
       {{/if}} {{#if player.isPlainHero }}
       <div class="player-status player-status-not-spy">{{{_ "ui.plain hero" }}}</div>
+=======
+      <div class="player-status player-status-not-spy">{{{_ "ui.you are a guardian hero" }}}</div>
+>>>>>>> ellBranch
       {{/if}}
     </div>
   </div>
