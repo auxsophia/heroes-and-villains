@@ -33,52 +33,92 @@ function shuffleArray(array) {
   return array;
 }
 
-  function getRandomFromArray(theArray) {
-    var randomIndex = Math.floor(Math.random()*theArray.length);
-    return theArray.splice(randomIndex, 1)[0];
- }
+function getRandomFromArray(theArray) {
+  var randomIndex = Math.floor(Math.random() * theArray.length);
+  return theArray.splice(randomIndex, 1)[0];
+}
 
-function assignRoles(players, location) {
-  var default_role = location.roles[location.roles.length - 1];
-  var roles = location.roles.slice();
-  var shuffled_roles = shuffleArray(roles);
-  var role = null;
-
+function assignRoles(players, location, numVillains) {
+  
+  var playerArray = [];
   players.forEach(function (player) {
-    if (!player.isVillain) {
-      role = shuffled_roles.pop();
+    playerArray.push(player);
+  });
 
-      if (role === undefined) {
-        role = default_role;
+  var shuffledPlayers = shuffleArray(playerArray);
+
+  console.log(shuffledPlayers);
+
+  for (var i = 0; i < numVillains; i++) {
+    var villainPlayer = shuffledPlayers.pop();
+    Players.update(villainPlayer._id, {
+      $set: {
+        role: "villain"
       }
-
-      Players.update(player._id, {
-        $set: {
-          role: role
-        }
-      });
-
-      if (role === 'locations.roles.herobase.guardian') {
-        Players.update(player._id, {
-          $set: {
-            isGuardian: true,
-            isTelepath: false,
-            isVillain: false
-          }
-        });
-      }
-
-      if (role === 'locations.roles.herobase.telepath') {
-        Players.update(player._id, {
-          $set: {
-            isTelepath: true,
-            isGuardian: false,
-            isVillain: false
-          }
-        });
-      }
+    });
+  }
+  var guardian = shuffledPlayers.pop();
+  Players.update(guardian._id, {
+    $set: {
+      role: "guardian"
     }
   });
+  var telepath = shuffledPlayers.pop();
+  Players.update(telepath._id, {
+    $set: {
+      role: "telepath"
+    }
+  });
+
+  shuffledPlayers.forEach(function(player) {
+    Players.update(player._id, {
+      $set: {
+        role: "hero"
+      }
+    });
+
+  });
+
+  // var default_role = location.roles[location.roles.length - 1];
+  // var roles = location.roles.slice();
+  // var shuffled_roles = shuffleArray(roles);
+  // var role = null;
+
+  // players.forEach(function (player) {
+  //   if (!player.isVillain) {
+  //     role = shuffled_roles.pop();
+
+  //     if (role === undefined) {
+  //       role = default_role;
+  //     }
+
+  //     Players.update(player._id, {
+  //       $set: {
+  //         role: role
+  //       }
+  //     });
+
+  //     if (role === 'locations.roles.herobase.guardian') {
+  //       Players.update(player._id, {
+  //         $set: {
+  //           isGuardian: true,
+  //           isTelepath: false,
+  //           isVillain: false
+  //         }
+  //       });
+  //     }
+
+  //     if (role === 'locations.roles.herobase.telepath') {
+  //       Players.update(player._id, {
+  //         $set: {
+  //           isTelepath: true,
+  //           isGuardian: false,
+  //           isVillain: false
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
 }
 
 
@@ -118,12 +158,14 @@ Games.find({
     var villainIndex = Math.floor(Math.random() * players.count());
     console.log(villainIndex);
 
-    players.forEach(function(player, index){
-      Players.update(player._id, {$set: {
-        isVillain: index === villainIndex,
-        isGuardian: false,
-        isTelepath: false
-      }});
+    players.forEach(function (player, index) {
+      Players.update(player._id, {
+        $set: {
+          isVillain: index === villainIndex,
+          isGuardian: false,
+          isTelepath: false
+        }
+      });
     });
 
     /*console.log("player count");
@@ -152,7 +194,7 @@ Games.find({
       });
     });*/
 
-    assignRoles(players, location);
+    assignRoles(players, location, game.villainCount);
 
     Games.update(id, {
       $set: {

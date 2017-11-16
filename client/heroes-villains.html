@@ -100,16 +100,16 @@
   </ol>
 
   <hr>
-    <div class="game-options">
-      <button class="increase-villains">+</button>
-      <input class="villain-count" disabled value="{{villainCount}}" type="text" />
-      <button class="decrease-villains">-</button>
-    </div>
-    <div class="button-container">
-      <button class="btn-start">{{_ "ui.start game" }}</button>
-      <button class="btn-leave">{{_ "ui.leave game" }}</button>
-    </div>
-    {{> addTestPlayers}}
+  <div class="game-options">
+    <button class="increase-villains">+</button>
+    <input class="villain-count" disabled value="{{villainCount}}" type="text" />
+    <button class="decrease-villains">-</button>
+  </div>
+  <div class="button-container">
+    <button class="btn-start">{{_ "ui.start game" }}</button>
+    <button class="btn-leave">{{_ "ui.leave game" }}</button>
+  </div>
+  {{> addTestPlayers}}
 </template>
 
 <template name="roleView">
@@ -124,22 +124,14 @@
 
 <template name="nightPhaseVillain">
   <h4>
-  It is night...
+    It is night...
   </h4>
 
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
-
     <div class="status-container-content">{{_ "ui.you are a"}}
-      {{#if player.isVillain }}
-      <div class="player-status player-status-spy">{{_ "ui.villain" }}</div>
-      {{else}}
-      <div class="player-status player-status-not-spy">{{{_ "ui.plain hero" }}}</div>
-      {{/if}} {{#if player.isTelepath }}
-      <div class="player-status player-status-not-spy">{{{_ "ui.telepath hero" }}}</div>
-      {{/if}} {{#if player.isGuardian }}
-      <div class="player-status player-status-not-spy">{{{_ "ui.guardian hero" }}}</div>
-      {{/if}}
+      <div class="player-status player-status-spy">{{ player.role }}</div>
+
     </div>
   </div>
 
@@ -147,7 +139,7 @@
   <ul class="ingame-player-list">
     {{#each players }}
     <li>
-      <div class="player-name">{{name}}
+      <div class="player-name">{{name}} ({{role}})
       </div>
     </li>
     {{/each}}
