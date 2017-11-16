@@ -139,15 +139,10 @@ generateNewPlayer = function (game, name) {
     gameID: game._id,
     name: name,
     role: null,
-<<<<<<< HEAD
-    isSpy: false,
+    isVillain: false,
     isFirstPlayer: false,
     suspicionScoreCount: 0,
     alive: true
-=======
-    isVillain: false,
-    isFirstPlayer: false
->>>>>>> ellBranch
   };
 
   var playerID = Players.insert(player);
