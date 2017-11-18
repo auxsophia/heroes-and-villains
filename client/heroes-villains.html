@@ -101,9 +101,9 @@
 
   <hr>
   <div class="game-options">
-    <button class="increase-villains">+</button>
+    <button disabled={{disableIncrease}} class="increase-villains"><i class="fa fa-plus"></i></button>
     <input class="villain-count" disabled value="{{villainCount}}" type="text" />
-    <button class="decrease-villains">-</button>
+    <button disabled={{disableDecrease}} class="decrease-villains"><i class="fa fa-minus"></i></button>
   </div>
   <div class="button-container">
     <button class="btn-start">{{_ "ui.start game" }}</button>
@@ -147,15 +147,6 @@
   </ul>
 
   <div class="u-cf"></div>
-
-  <!-- <h5>{{_ "ui.location reference" }}</h5>
-  <ul class="location-list">
-    {{#each locations }}
-    <li>
-      <div class="location-name">{{_ name }}</div>
-    </li>
-    {{/each}}
-  </ul> -->
 
   <hr>
 

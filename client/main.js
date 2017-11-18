@@ -104,6 +104,25 @@ function getCurrentPlayer() {
   }
 }
 
+getAllCurrentPlayers = function () {
+  var game = getCurrentGame();
+  var currentPlayer = getCurrentPlayer();
+
+  if (!game) {
+    return null;
+  }
+
+  var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
+
+  players.forEach(function (player) {
+    if (player._id === currentPlayer._id) {
+      player.isCurrent = true;
+    }
+  });
+
+  return players;
+}
+
 function generateAccessCode() {
   var code = "";
   var possible = "abcdefghijklmnopqrstuvwxyz";
@@ -122,7 +141,7 @@ function generateNewGame() {
     location: null,
     currentPhase: "preStart",
     lengthInMinutes: 8,
-    villainCount: 3,
+    villainCount: 1,
     endTime: null,
     paused: false,
     pausedTime: null
@@ -278,7 +297,7 @@ Template.footer.events({
   }
 })
 
-Template.registerHelper( 'concat', ( string1, string2 ) => {
+Template.registerHelper('concat', (string1, string2) => {
   return string1 + string2;
 });
 
@@ -310,7 +329,9 @@ Template.createGame.events({
   'submit #create-game': function (event) {
     GAnalytics.event("game-actions", "newgame");
 
+
     var playerName = event.target.playerName.value;
+
 
     if (!playerName || Session.get('loading')) {
       return false;
@@ -431,27 +452,22 @@ Template.lobby.helpers({
   player: function () {
     return getCurrentPlayer();
   },
-  players: function () {
-    var game = getCurrentGame();
-    var currentPlayer = getCurrentPlayer();
-
-    if (!game) {
-      return null;
-    }
-
-    var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
-
-    players.forEach(function (player) {
-      if (player._id === currentPlayer._id) {
-        player.isCurrent = true;
-      }
-    });
-
-    return players;
-  },
+  players: getAllCurrentPlayers,
   villainCount: function () {
     var game = getCurrentGame();
     return game.villainCount;
+  },
+  // Must be at least 1 villain
+  disableDecrease: function () {
+    var game = getCurrentGame();
+    return game.villainCount <= 1;
+  },
+  // never allow 50% or greater villainy
+  disableIncrease: function () {
+    var game = getCurrentGame();
+    var players = getAllCurrentPlayers();
+    console.log(players);
+    return game.villainCount >= (players.length / 2);
   },
   isLoading: function () {
     var game = getCurrentGame();
@@ -520,7 +536,7 @@ function getTimeRemaining() {
 
 function goToNight() {
   game = getCurrentGame();
-  Games.update(game._id,{
+  Games.update(game._id, {
     $set: {
       state: 'nightPhaseVillain'
     }
@@ -528,7 +544,7 @@ function goToNight() {
 }
 
 Template.roleView.helpers({
-  isModerator: function() {
+  isModerator: function () {
     game = getCurrentGame();
     return getCurrentPlayer()._id == game.moderator;;
   },
@@ -543,19 +559,7 @@ Template.roleView.events({
 Template.nightPhaseVillain.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
-  players: function () {
-    var game = getCurrentGame();
-
-    if (!game) {
-      return null;
-    }
-
-    var players = Players.find({
-      'gameID': game._id
-    });
-
-    return players;
-  },
+  players: getAllCurrentPlayers,
   locations: function () {
     return locations;
   },
@@ -610,7 +614,7 @@ Template.nightPhaseVillain.events({
   //Test
   , 'click .btn-test': function (event) {
     var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: "dayPhase"}});
+    Games.update(game._id, { $set: { state: "dayPhase" } });
   }
   //Test End
 });
@@ -625,24 +629,7 @@ Template.nightPhaseVillain.events({
 */
 
 Template.dayPhase.helpers({
-  players: function () {
-    var game = getCurrentGame();
-    var currentPlayer = getCurrentPlayer();
-
-    if (!game) {
-      return null;
-    }
-
-    var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
-
-    players.forEach(function (player) {
-      if (player._id === currentPlayer._id) {
-        player.isCurrent = true;
-      }
-    });
-
-    return players;
-  },
+  players: getAllCurrentPlayers,
   isLoading: function () {
     var game = getCurrentGame();
     return game.state === '';
