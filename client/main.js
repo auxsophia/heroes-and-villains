@@ -394,13 +394,14 @@ Template.joinGame.events({
       });
 
       if (game) {
+        if (game.state != "preStart") {
+          FlashMessages.sendError(TAPi18n.__("ui.tried to join running game"));
+          return false;
+        }
+      
         Meteor.subscribe('players', game._id);
         player = generateNewPlayer(game, playerName);
 
-        if (game.state === "inProgress") {
-          var default_role = game.location.roles[game.location.roles.length - 1];
-          Players.update(player._id, { $set: { role: default_role } });
-        }
 
         Session.set('urlAccessCode', null);
         Session.set("gameID", game._id);

@@ -26,6 +26,7 @@
         "back": "Back",
         "enter an access code": "Enter an access code",
         "invalid access code": "Sorry, no game was found with the access code you provided!",
+        "tried to join running game": "Sorry, you tried to join a game that is in progress!",
         "join": "Join",
         "footer": "Based on the games Mafia and Werewolf",
         "vote": "Vote!",
