@@ -183,6 +183,8 @@ function trackGameState() {
     Session.set("currentView", "roleView");
   } else if (game.state === "nightPhaseVillain") {
     Session.set("currentView", "nightPhaseVillain");
+  } else if (game.state === "dayPhase") {
+    Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
   }
@@ -449,7 +451,6 @@ Template.lobby.helpers({
   },
   villainCount: function () {
     var game = getCurrentGame();
-    console.log(game);
     return game.villainCount;
   },
   isLoading: function () {
@@ -518,7 +519,6 @@ function getTimeRemaining() {
 }
 
 function goToNight() {
-  console.log("setting night phase");
   game = getCurrentGame();
   Games.update(game._id,{
     $set: {
@@ -609,7 +609,8 @@ Template.nightPhaseVillain.events({
   }
   //Test
   , 'click .btn-test': function (event) {
-    Session.set('currentView', 'dayPhase');
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: "dayPhase"}});
   }
   //Test End
 });
@@ -648,18 +649,14 @@ Template.dayPhase.helpers({
   },
   suspicionScoreCount: function () {
     var player = getCurrentPlayer();
-    console.log("day phase log");
     return player.suspicionScoreCount;
   }
 });
 
 Template.dayPhase.events({
   'change input:radio[name=player]': function () {
-
     var selectedPlayerID = $(this)[0]._id;//.closest('input:hidden[name=player-id]')[0]._id;
-    console.log(selectedPlayerID);
     var player = Players.findOne(selectedPlayerID);
-    console.log(player);
     Players.update(player._id, {
       $set: { suspicionScoreCount: player.suspicionScoreCount + 1 },
     });

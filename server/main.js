@@ -47,8 +47,6 @@ function assignRoles(players, location, numVillains) {
 
   var shuffledPlayers = shuffleArray(playerArray);
 
-  console.log(shuffledPlayers);
-
   for (var i = 0; i < numVillains; i++) {
     var villainPlayer = shuffledPlayers.pop();
     Players.update(villainPlayer._id, {
@@ -156,7 +154,6 @@ Games.find({
     var gameEndTime = moment().add(game.lengthInMinutes, 'minutes').valueOf();
 
     var villainIndex = Math.floor(Math.random() * players.count());
-    console.log(villainIndex);
 
     players.forEach(function (player, index) {
       Players.update(player._id, {
@@ -167,32 +164,6 @@ Games.find({
         }
       });
     });
-
-    /*console.log("player count");
-    console.log(players.count());
-    var bucket = [];
-    for (var i = 0; i < players.count(); i++) {
-      bucket.push(i);
-    }
-    var telepathIndex = getRandomFromArray(bucket);
-    console.log(telepathIndex);
-    var guardianIndex = getRandomFromArray(bucket);
-    console.log(guardianIndex);
-    var villainIndex = getRandomFromArray(bucket);
-    console.log(villainIndex);
-    var villainIndex2 = getRandomFromArray(bucket);
-    console.log(villainIndex2);
-
-    players.forEach(function (player, index) {
-      Players.update(player._id, {
-        $set: {
-          isTelepath: index === telepathIndex,
-          isGuardian: index === guardianIndex,
-          isVillain: index === villainIndex || villainIndex2,
-          isPlainHero: index !== telepathIndex && index !== guardianIndex && index !== villainIndex && index !== villainIndex2
-        }
-      });
-    });*/
 
     assignRoles(players, location, game.villainCount);
 
