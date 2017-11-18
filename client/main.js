@@ -466,8 +466,10 @@ Template.lobby.helpers({
   disableIncrease: function () {
     var game = getCurrentGame();
     var players = getAllCurrentPlayers();
-    console.log(players);
     return game.villainCount >= (players.length / 2);
+  },
+  gameHasTooFewPlayers: function() {
+    return getAllCurrentPlayers().length < 4;
   },
   isLoading: function () {
     var game = getCurrentGame();

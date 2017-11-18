@@ -106,7 +106,7 @@
     <button disabled={{disableDecrease}} class="decrease-villains"><i class="fa fa-minus"></i></button>
   </div>
   <div class="button-container">
-    <button class="btn-start">{{_ "ui.start game" }}</button>
+    <button disabled={{gameHasTooFewPlayers}} class="btn-start">{{_ "ui.start game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
   </div>
   {{> addTestPlayers}}

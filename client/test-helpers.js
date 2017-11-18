@@ -23,13 +23,11 @@ var fakePlayerNames = [
 
 Template.addTestPlayers.events({
     'click .btn-add-test-players': function (event) {
-        console.log("Adding test players");
         var game = Games.findOne({_id: Session.get("gameID")});
-        console.log(Meteor.settings.public);
-        fakePlayerNames.forEach(function(name) {
-            generateNewPlayer(game, name);
-
-        })
+        if (fakePlayerNames.length > 0){
+            generateNewPlayer(game, fakePlayerNames.pop());
+        } else {
+            console.error("Ran out of names, couldn't add another fake player");
+        }
     }
-
 });
