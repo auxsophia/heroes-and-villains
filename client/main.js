@@ -162,7 +162,8 @@ generateNewPlayer = function (game, name) {
     isFirstPlayer: false,
     suspicionScoreCount: 0,
     isAlive: true,
-    selectedPlayerID: null
+    selectedPlayerID: null,
+    isReady: false // Boolean to check if player is ready to transition to next game state
   };
 
   var playerID = Players.insert(player);
@@ -203,6 +204,8 @@ function trackGameState() {
     Session.set("currentView", "roleView");
   } else if (game.state === "nightPhaseVillain") {
     Session.set("currentView", "nightPhaseVillain");
+  } else if(game.state === "summaryNightPhase") {
+    Session.set("currentView", "summaryNightPhase")
   } else if (game.state === "dayPhase") {
     Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
@@ -651,33 +654,22 @@ Template.dayPhase.helpers({
 */
 
 Template.playerVote.helpers({
-  players: getAllCurrentPlayers
+  players: getAllCurrentPlayers,
+  isReady: function () {
+    var player = getCurrentPlayer();
+    return player.isReady;
+  }
 });
 
 Template.playerVote.events({
   'change input:radio[name=player]': function () {
-
     var vSelectedPlayerID = $(this)[0]._id;
-
-    /*
-    // Old way of calculating suspicion score
-    var player = Players.findOne(vSelectedPlayerID);
-    Players.update(player._id, {
-      $set: { suspicionScoreCount: player.suspicionScoreCount + 1 },
-    });
-    */
     // Keep track of the current players selection
     var player = getCurrentPlayer();
     Players.update(player._id, {
       $set: { selectedPlayerID: vSelectedPlayerID },
     });
-
-    // Then update the suspicionScoreCount for the selected player
-    //player = Players.findOne(vSelectedPlayerID);
-    //console.log( Players.find({ selectedPlayerID: vSelectedPlayerID }).count());
-    //Players.update(player._id, {
-      //$set: { suspicionScoreCount: Players.find({ selectedPlayerID: vSelectedPlayerID }).count() },
-    //});
+    // Then update the suspicionScoreCount for all players
     var players = getAllCurrentPlayers();
     players.forEach(function (player) {
       Players.update(player._id, {
@@ -685,8 +677,39 @@ Template.playerVote.events({
       });
     });
   },
+  'click .btn-player-ready': function (event) {
+    var player = getCurrentPlayer();
+    Players.update(player._id, {
+      $set: { isReady: true },
+    });
+  }
 });
 
+// If players are ready transition to appropriate state
+function checkAllPlayerIsReady () {
+  var game = getCurrentGame();
+  var isReady = true;
+  var nextState = null;
+
+  var players = getAllCurrentPlayers();
+  players.forEach(function (player) {
+    if (game.state === "nightPhaseVillain") {
+      if(player.role === ui.villain) {
+        if(!player.isReady){
+          isReady = false;
+          return;
+        }
+      }
+    } else if (game.state === "dayPhase") {
+
+    }
+  });
+
+  if(isReady && (nextState != null)) {
+    Games.update(game._id, { $set: { state: "summaryNightPhase" } });
+  }
+  return;
+}
 /*
       player-vote end
 */
