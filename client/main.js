@@ -394,19 +394,22 @@ Template.joinGame.events({
       });
 
       if (game) {
-        if (game.state != "preStart") {
-          FlashMessages.sendError(TAPi18n.__("ui.tried to join running game"));
-          return false;
+        // Only allow players to be added when game state is preStart or waitingForPlayers
+        console.log(game.state);
+        if (game.state == "preStart" || game.state == "waitingForPlayers") {
+          Meteor.subscribe('players', game._id);
+          player = generateNewPlayer(game, playerName);
+  
+  
+          Session.set('urlAccessCode', null);
+          Session.set("gameID", game._id);
+          Session.set("playerID", player._id);
+          Session.set("currentView", "lobby");
         }
-      
-        Meteor.subscribe('players', game._id);
-        player = generateNewPlayer(game, playerName);
+        // Otherwise send error
+        FlashMessages.sendError(TAPi18n.__("ui.tried to join running game"));
+        return false;
 
-
-        Session.set('urlAccessCode', null);
-        Session.set("gameID", game._id);
-        Session.set("playerID", player._id);
-        Session.set("currentView", "lobby");
       } else {
         FlashMessages.sendError(TAPi18n.__("ui.invalid access code"));
         GAnalytics.event("game-actions", "invalidcode");
@@ -632,7 +635,6 @@ Template.nightPhaseVillain.events({
 */
 
 Template.dayPhase.helpers({
-  players: getAllCurrentPlayers,
   isLoading: function () {
     var game = getCurrentGame();
     return game.state === '';
@@ -643,7 +645,19 @@ Template.dayPhase.helpers({
   }
 });
 
-Template.dayPhase.events({
+/*
+      day-phase end
+*/
+
+/*
+      player-vote start
+*/
+
+Template.playerVote.helpers({
+  players: getAllCurrentPlayers
+});
+
+Template.playerVote.events({
   'change input:radio[name=player]': function () {
     var selectedPlayerID = $(this)[0]._id;//.closest('input:hidden[name=player-id]')[0]._id;
     var player = Players.findOne(selectedPlayerID);
@@ -654,5 +668,5 @@ Template.dayPhase.events({
 });
 
 /*
-      day-phase end
+      player-vote end
 */
