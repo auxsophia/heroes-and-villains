@@ -161,7 +161,8 @@ generateNewPlayer = function (game, name) {
     isVillain: false,
     isFirstPlayer: false,
     suspicionScoreCount: 0,
-    alive: true
+    isAlive: true,
+    selectedPlayerID: null
   };
 
   var playerID = Players.insert(player);
@@ -635,10 +636,6 @@ Template.nightPhaseVillain.events({
 */
 
 Template.dayPhase.helpers({
-  isLoading: function () {
-    var game = getCurrentGame();
-    return game.state === '';
-  },
   suspicionScoreCount: function () {
     var player = getCurrentPlayer();
     return player.suspicionScoreCount;
@@ -659,10 +656,33 @@ Template.playerVote.helpers({
 
 Template.playerVote.events({
   'change input:radio[name=player]': function () {
-    var selectedPlayerID = $(this)[0]._id;//.closest('input:hidden[name=player-id]')[0]._id;
-    var player = Players.findOne(selectedPlayerID);
+
+    var vSelectedPlayerID = $(this)[0]._id;
+
+    /*
+    // Old way of calculating suspicion score
+    var player = Players.findOne(vSelectedPlayerID);
     Players.update(player._id, {
       $set: { suspicionScoreCount: player.suspicionScoreCount + 1 },
+    });
+    */
+    // Keep track of the current players selection
+    var player = getCurrentPlayer();
+    Players.update(player._id, {
+      $set: { selectedPlayerID: vSelectedPlayerID },
+    });
+
+    // Then update the suspicionScoreCount for the selected player
+    //player = Players.findOne(vSelectedPlayerID);
+    //console.log( Players.find({ selectedPlayerID: vSelectedPlayerID }).count());
+    //Players.update(player._id, {
+      //$set: { suspicionScoreCount: Players.find({ selectedPlayerID: vSelectedPlayerID }).count() },
+    //});
+    var players = getAllCurrentPlayers();
+    players.forEach(function (player) {
+      Players.update(player._id, {
+        $set: { suspicionScoreCount: Players.find({ selectedPlayerID: player._id }).count() }
+      });
     });
   },
 });

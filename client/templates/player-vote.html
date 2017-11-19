@@ -4,11 +4,13 @@
       <h5>{{_ "ui.players" }}</h5>
       <ul class="ingame-player-list">
         {{#each players }}
-        <li>
-          <div class="player-name">
-            <input type="hidden" name="player-id" value="{{_id}}"><input type="radio" name="player">  {{ name }}
-          </div>
-        </li>
+          {{#if isAlive}}
+            <li>
+              <div class="player-name">
+                <input type="hidden" name="player-id" value="{{_id}}"><input type="radio" name="player">  {{ name }}
+              </div>
+            </li>
+          {{/if}}
         {{/each}}
       </ul>
     </div>

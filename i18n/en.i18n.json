@@ -31,7 +31,8 @@
         "footer": "Based on the games Mafia and Werewolf",
         "vote": "Vote!",
         "dayPhaseHeader": "Day Phase",
-        "suspicionScoreLabel": "Suspicion Score"
+        "suspicionScoreLabel": "Suspicion Score",
+        "playerAsleep": "You are asleep...(close your eyes!)"
         
     },
     "instructions":

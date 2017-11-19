@@ -136,6 +136,7 @@
     </div>
   </div>
 
+<!--
   <h5>{{_ "ui.players" }}</h5>
   <ul class="ingame-player-list">
     {{#each players }}
@@ -145,6 +146,13 @@
     </li>
     {{/each}}
   </ul>
+-->
+  {{#if player.isVillain}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
+  {{else}}
+    {{_ "ui.playerAsleep" }}
+  {{/if}}
 
   <div class="u-cf"></div>
 
