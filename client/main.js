@@ -582,6 +582,13 @@ Template.nightPhaseVillain.helpers({
     var timeRemaining = getTimeRemaining();
 
     return moment(timeRemaining).format('mm[<span>:</span>]ss');
+  },
+  isVillain: function () { // Temporary until isVillain logic is fixed in player object
+    var player = getCurrentPlayer();
+    if(player.role === 'villain') {
+      return true;
+    }
+    return false;
   }
 });
 
@@ -621,12 +628,6 @@ Template.nightPhaseVillain.events({
   'click .location-name-striked': function (event) {
     event.target.className = 'location-name';
   }
-  //Test
-  , 'click .btn-test': function (event) {
-    var game = getCurrentGame();
-    Games.update(game._id, { $set: { state: "dayPhase" } });
-  }
-  //Test End
 });
 
 
@@ -682,34 +683,81 @@ Template.playerVote.events({
     Players.update(player._id, {
       $set: { isReady: true },
     });
+    checkAllPlayerIsReady();
   }
 });
 
 // If players are ready transition to appropriate state
-function checkAllPlayerIsReady () {
+function checkAllPlayerIsReady() {
   var game = getCurrentGame();
   var isReady = true;
   var nextState = null;
+  var players = null;
 
-  var players = getAllCurrentPlayers();
-  players.forEach(function (player) {
-    if (game.state === "nightPhaseVillain") {
-      if(player.role === ui.villain) {
-        if(!player.isReady){
-          isReady = false;
-          return;
-        }
+  if (game.state === "nightPhaseVillain") {
+    nextState = "summaryNightPhase";
+    // Consider votes from villains who are ready and alive
+    players = Players.find({ $and: [{ 'gameID': game._id }, {'role':'villain'}, {'isAlive':true} ] }).fetch();
+  } else if (game.state === "dayPhase") {
+    nextState = "summaryDayPhase";
+    // Consider votes from eveyone alive
+    players = Players.find({ $and:[{ 'gameID': game._id }, {'isAlive':true}]}).fetch();
+  }
+
+  if(players != null && nextState != null) {
+    players.forEach(function (player) {
+      // Check that all players are ready
+      if(!player.isReady){
+        isReady = false;
+        return;
       }
-    } else if (game.state === "dayPhase") {
+    });
 
+    // If all players are ready and next state selected then update game state
+    if(isReady && (nextState != null)) {
+      Games.update(game._id, { $set: { state: nextState } });
     }
-  });
-
-  if(isReady && (nextState != null)) {
-    Games.update(game._id, { $set: { state: "summaryNightPhase" } });
   }
   return;
 }
 /*
       player-vote end
 */
+
+
+/*
+      summary-night-phase start
+*/
+Template.summaryNightPhase.helpers({
+  player : setPlayerNotAlive
+});
+
+Template.summaryNightPhase.rendered = function() {
+  // Show results screen for 5 seconds before switching to day phase
+  Meteor.setTimeout(function (){
+    Games.update(game._id, { $set: { state: "dayPhase" } });
+  }, 5000);
+}
+
+function setPlayerNotAlive() {
+  var game = getCurrentGame();
+  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
+  Players.update(player._id, {
+    $set: { isAlive: false },
+  });
+  return player;
+}
+
+function resetPlayerVotingVariables (){
+  // Reset suspicionScoreCount, selectedPlayerID, isReady to default values after each voting phase
+  var players = getAllCurrentPlayers();
+  players.forEach(function (player) {
+    Players.update(player._id, {
+      $set: { suspicionScoreCount: 0, selectedPlayerID: null, isReady: false }
+    });
+  });
+}
+/*
+      summary-night-phase end
+*/
+

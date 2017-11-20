@@ -147,7 +147,7 @@
     {{/each}}
   </ul>
 -->
-  {{#if player.isVillain}}
+  {{#if isVillain}}
     {{> Template.dynamic template=whichView}}
     {{> playerVote}}
   {{else}}
@@ -161,9 +161,6 @@
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
-    <!--Test-->
-    <button class="btn-test">day-phase test (delete later)</button>
-    <!--Test End-->
   </div>
 </template>
 
