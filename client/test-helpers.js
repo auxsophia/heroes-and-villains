@@ -25,7 +25,11 @@ Template.addTestPlayers.events({
     'click .btn-add-test-players': function (event) {
         var game = Games.findOne({_id: Session.get("gameID")});
         if (fakePlayerNames.length > 0){
-            generateNewPlayer(game, fakePlayerNames.pop());
+          var url = 'http://localhost:3000' + '/' + game.accessCode + '/';
+          var win = window.open(url);
+          win.focus();
+
+          //generateNewPlayer(game, fakePlayerNames.pop());
         } else {
             console.error("Ran out of names, couldn't add another fake player");
         }

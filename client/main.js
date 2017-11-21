@@ -210,6 +210,8 @@ function trackGameState() {
     Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
+  } else if (game.state === "telepathPhase") {
+    Session.set("currentView", "telepathPhase")
   }
 }
 
@@ -403,8 +405,8 @@ Template.joinGame.events({
         if (game.state == "preStart" || game.state == "waitingForPlayers") {
           Meteor.subscribe('players', game._id);
           player = generateNewPlayer(game, playerName);
-  
-  
+
+
           Session.set('urlAccessCode', null);
           Session.set("gameID", game._id);
           Session.set("playerID", player._id);
@@ -627,6 +629,10 @@ Template.nightPhaseVillain.events({
   },
   'click .location-name-striked': function (event) {
     event.target.className = 'location-name';
+  },
+  'click .btn-test': function (event) {
+    var game = getCurrentGame();
+    Games.update(game._id, { $set: { state: 'telepathPhase' } });
   }
 });
 
@@ -684,6 +690,41 @@ Template.playerVote.events({
       $set: { isReady: true },
     });
     checkAllPlayerIsReady();
+  }
+});
+
+Template.telepathPhase.helpers({
+  players: getAllCurrentPlayers,
+  isReady: function () {
+    var player = getCurrentPlayer();
+    return player.isReady;
+  },
+  playerRole: function () {
+    var player = getCurrentPlayer();
+    if (player.isReady) {
+      var selectedPlayer = Players.find({ _id: player.selectedPlayerID });
+      return selectedPlayer.role;
+    } else {
+      return "";
+    }
+  }
+});
+
+Template.telepathPhase.events({
+  'change input:radio[name=player]': function () {
+    var vSelectedPlayerID = $(this)[0]._id;
+    // Keep track of the current players selection
+    var player = getCurrentPlayer();
+    Players.update(player._id, {
+      $set: { selectedPlayerID: vSelectedPlayerID },
+    });
+  },
+
+  'click .btn-player-ready': function (event) {
+    var player = getCurrentPlayer();
+    Players.update(player._id, {
+      $set: { isReady: true },
+    });
   }
 });
 
@@ -760,4 +801,3 @@ function resetPlayerVotingVariables (){
 /*
       summary-night-phase end
 */
-
