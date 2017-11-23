@@ -206,6 +206,8 @@ function trackGameState() {
     Session.set("currentView", "nightPhaseVillain");
   } else if(game.state === "summaryNightPhase") {
     Session.set("currentView", "summaryNightPhase")
+  } else if(game.state === "summaryDayPhase") {
+    Session.set("currentView", "summaryDayPhase")
   } else if (game.state === "dayPhase") {
     Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
@@ -769,35 +771,69 @@ function checkAllPlayerIsReady() {
 /*
       summary-night-phase start
 */
-Template.summaryNightPhase.helpers({
-  player : setPlayerNotAlive
-});
+Template.summaryNightPhase.nameOfKilledPlayer = function (){
+  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
+  return player.name;
+}
 
 Template.summaryNightPhase.rendered = function() {
+  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
   // Show results screen for 5 seconds before switching to day phase
   Meteor.setTimeout(function (){
+    setPlayerNotAlive();
+    resetPlayerVotingVariables();
+    game = getCurrentGame();
     Games.update(game._id, { $set: { state: "dayPhase" } });
   }, 5000);
 }
 
+/*
+      summary-night-phase end
+*/
+
+
+/*
+      summary-day-phase start
+*/
+Template.summaryDayPhase.nameOfKilledPlayer = function (){
+  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
+  return player.name;
+}
+
+Template.summaryDayPhase.rendered = function() {
+  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
+  // Show results screen for 5 seconds before switching to day phase
+  Meteor.setTimeout(function (){
+    setPlayerNotAlive();
+    resetPlayerVotingVariables();
+    game = getCurrentGame();
+    Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
+  }, 5000);
+}
+
+/*
+      summary-day-phase end
+*/
+
+
+
+
 function setPlayerNotAlive() {
-  var game = getCurrentGame();
+  //Set player with highest suspicionScoreCount to not alive
   var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
   Players.update(player._id, {
     $set: { isAlive: false },
   });
-  return player;
 }
 
 function resetPlayerVotingVariables (){
   // Reset suspicionScoreCount, selectedPlayerID, isReady to default values after each voting phase
-  var players = getAllCurrentPlayers();
+  var game = getCurrentGame();
+  var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
   players.forEach(function (player) {
     Players.update(player._id, {
       $set: { suspicionScoreCount: 0, selectedPlayerID: null, isReady: false }
     });
   });
 }
-/*
-      summary-night-phase end
-*/
+
