@@ -123,6 +123,14 @@ getAllCurrentPlayers = function () {
   return players;
 }
 
+// Get all but the current player
+getNonCurrentPlayers = function () {
+  var game = getCurrentGame();
+  var currentPlayer = getCurrentPlayer();
+  var players = Players.find({ $and: [{ 'gameID': game._id }, { '_id':{$not:{$eq:currentPlayer._id}}}]}, { 'sort': { 'createdAt': 1 }} ).fetch();
+  return players;
+}
+
 function generateAccessCode() {
   var code = "";
   var possible = "abcdefghijklmnopqrstuvwxyz";
@@ -663,7 +671,7 @@ Template.dayPhase.helpers({
 */
 
 Template.playerVote.helpers({
-  players: getAllCurrentPlayers,
+  players: getNonCurrentPlayers,
   isReady: function () {
     var player = getCurrentPlayer();
     return player.isReady;
