@@ -2,7 +2,6 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
 import './heroes-villains.html';
-import './end-game.html';
 import './test-helpers.html';
 import './templates/day-phase.html';
 
@@ -222,6 +221,10 @@ function trackGameState() {
     Session.set("currentView", "lobby");
   } else if (game.state === "telepathPhase") {
     Session.set("currentView", "telepathPhase")
+  } else if (game.state ==="villainWin") {
+    Session.set("currentView","villainWin")
+  } else if (game.state ==="heroWin") {
+    Session.set("currentView","heroWin")
   }
 }
 
@@ -790,8 +793,10 @@ Template.summaryNightPhase.rendered = function() {
   Meteor.setTimeout(function (){
     setPlayerNotAlive();
     resetPlayerVotingVariables();
-    game = getCurrentGame();
-    Games.update(game._id, { $set: { state: "dayPhase" } });
+    if(!isWinCondition()){
+      game = getCurrentGame();
+      Games.update(game._id, { $set: { state: "dayPhase" } });
+    }
   }, 5000);
 }
 
@@ -814,8 +819,10 @@ Template.summaryDayPhase.rendered = function() {
   Meteor.setTimeout(function (){
     setPlayerNotAlive();
     resetPlayerVotingVariables();
-    game = getCurrentGame();
-    Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
+    if(!isWinCondition()){
+      game = getCurrentGame();
+      Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
+    }
   }, 5000);
 }
 
@@ -823,8 +830,25 @@ Template.summaryDayPhase.rendered = function() {
       summary-day-phase end
 */
 
+/*
+    end-game start
+*/
 
+Template.villainWin.events ({
+  'click .btn-leave': leaveGame
+});
 
+Template.heroWin.events ({
+  'click .btn-leave': leaveGame
+});
+
+/*
+    end-game end
+*/
+
+/*
+    Utility Functions
+*/
 
 function setPlayerNotAlive() {
   //Set player with highest suspicionScoreCount to not alive
@@ -843,5 +867,21 @@ function resetPlayerVotingVariables (){
       $set: { suspicionScoreCount: 0, selectedPlayerID: null, isReady: false }
     });
   });
+}
+
+function isWinCondition(){
+  var game = getCurrentGame();
+  var villainAliveCount = Players.find({ $and: [{ 'gameID': game._id }, { 'isVillain':true},{'isAlive':true}]}).count();
+  var heroAliveCount    = Players.find({ $and: [{ 'gameID': game._id }, { 'isVillain':false},{'isAlive':true}]}).count();
+
+  if(villainAliveCount === 0){
+    Games.update(game._id, { $set: { state: "heroWin" } });
+    return true;
+  }
+  if(heroAliveCount === 0) {
+    Games.update(game._id, { $set: { state: "villainWin" } });
+    return true;
+  }
+  return false;
 }
 

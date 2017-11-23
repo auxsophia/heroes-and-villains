@@ -1,7 +1,6 @@
 <template name="playerVote">
     {{#if isReady }}
       {{_ "ui.waiting for players"}}
-      <span class="spinner"></span>
     {{else}}
       <div class="">
         <!--<input type="text" id="player-name" name="playerName" placeholder='{{_ "ui.enter your name" }}'>-->
@@ -11,7 +10,7 @@
             {{#if isAlive}}
               <li>
                 <div class="player-name">
-                  <input type="hidden" name="player-id" value="{{_id}}"><input type="radio" name="player">  {{ name }}
+                  <input type="hidden" name="player-id" value="{{_id}}"><input type="radio" name="player">  {{ name }} ({{_ (concat "ui." role)}})
                 </div>
               </li>
             {{/if}}
