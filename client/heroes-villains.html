@@ -194,6 +194,34 @@
   </div>
 </template>
 
+<template name="gameLog">
+    <div class="gameLog">
+        <strong>Game Log</strong>
+        <ul>
+          {{#each entry in gameLog}}
+          <li>
+            {{entry.phase}} {{entry.roundNumber}}: {{entry.message}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+</template>
+
+<template name="guardianLog">
+    <div class="guardianLog">
+        Your Guardian Actions
+        <ul>
+          {{#each entry in guardianLog}}
+          <li>
+            Round {{entry.roundNumber}} -  {{entry.message}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+</template>
+
+
+
 <template name="createGame">
   <h4>
     {{#if isLoading }}

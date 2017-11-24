@@ -851,20 +851,5 @@ function resetPlayerVotingVariables (){
   });
 }
 
-function isWinCondition(){
-  var game = getCurrentGame();
-  var villainAliveCount = Players.find({ $and: [{ 'gameID': game._id }, { 'isVillain':true},{'isAlive':true}]}).count();
-  var heroAliveCount    = Players.find({ $and: [{ 'gameID': game._id }, { 'isVillain':false},{'isAlive':true}]}).count();
 
-  if(villainAliveCount === 0){
-    Games.update(game._id, { $set: { state: "heroWin" } });
-    return true;
-  }
-  console.log(heroAliveCount+" "+villainAliveCount);
-  if(heroAliveCount <= villainAliveCount) {
-    Games.update(game._id, { $set: { state: "villainWin" } });
-    return true;
-  }
-  return false;
-}
 

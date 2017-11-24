@@ -145,6 +145,7 @@ Games.find({
     Games.update(id, {
       $set: {
         state: 'roleView',
+        roundNumber: 1,
         location: location,
         gameLog: [],
         guardianLog: [],
@@ -195,8 +196,23 @@ getAllCurrentPlayers = function (gameID) {
 function clearVotes(gameID) {
   var players = getAllCurrentPlayers(gameID);
   players.forEach(function (player) {
-    Players.update(player._id, { $set: { selectedPlayerID: null } });
+    Players.update(player._id, { $set: { selectedPlayerID: null, suspicionScoreCount: 0 } });
   });
+}
+
+function checkWinCondition(gameID) {
+  var villainAliveCount = Players.find({ $and: [{ 'gameID': gameID }, { 'isVillain': true }, { 'isAlive': true }] }).count();
+  var heroAliveCount = Players.find({ $and: [{ 'gameID': gameID }, { 'isVillain': false }, { 'isAlive': true }] }).count();
+  console.log("Checking Win - Heroes: " + heroAliveCount + ", Villains: " + villainAliveCount);
+  if (villainAliveCount === 0) {
+    Games.update(gameID, { $set: { state: "heroWin" } });
+    return true;
+  }
+  if (heroAliveCount <= villainAliveCount) {
+    Games.update(gameID, { $set: { state: "villainWin" } });
+    return true;
+  }
+  return false;
 }
 
 function processVote(gameID) {
@@ -223,6 +239,7 @@ function processVote(gameID) {
         var pendingKilledPlayerID = votes[0];
         Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
+        checkWinCondition(game._id);
       }
       break;
     case "guardianNightPhase":
@@ -232,12 +249,13 @@ function processVote(gameID) {
       var protectedPlayerName = Players.findOne(protectedPlayerID).name;
       var gameLog = game.gameLog;
       var guardianLog = game.guardianLog;
-      guardianLog.push("Protected " + protectedPlayerName);
       if (protectedPlayerID == game.pendingKill) {
-        gameLog.push("No hero was killed");
+        guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You rescued " + protectedPlayerName });
+        gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "No hero was killed" });
       } else {
+        guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You chose " + protectedPlayerName + " but " + playerKilledName + " was killed." });
         var playerKilledName = Players.findOne(game.pendingKill).name;
-        gameLog.push(playerKilledName + " was killed.");
+        gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: playerKilledName + " was killed." });
         Players.update(game.pendingKill, {
           $set: { isAlive: false },
         });
@@ -261,12 +279,13 @@ function processVote(gameID) {
       if (majorityVotedID) {
         var gameLog = game.gameLog;
         var playerLockedUpName = Players.findOne(majorityVotedID).name;
-        gameLog.push(playerLockedUpName + " was locked up.");
+        gameLog.push({ phase: "Day", roundNumber: game.roundNumber, message: playerLockedUpName + " was locked up." });
         Players.update(majorityVotedID, {
           $set: { isAlive: false },
         });
         clearVotes();
-        Games.update(game._id, { $set: { state: "nightPhase", gameLog: gameLog } });
+        Games.update(gameID, { $set: { state: "nightPhase", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
+        checkWinCondition(gameID);
       } else {
 
       }
