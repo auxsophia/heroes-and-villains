@@ -211,10 +211,12 @@ function trackGameState() {
     Session.set("currentView", "roleView");
   } else if (game.state === "nightPhaseVillain") {
     Session.set("currentView", "nightPhaseVillain");
-  } else if(game.state === "summaryNightPhase") {
-    Session.set("currentView", "summaryNightPhase")
-  } else if(game.state === "summaryDayPhase") {
-    Session.set("currentView", "summaryDayPhase")
+  } else if (game.state === "guardianNightPhase") {
+    Session.set("currentView", "guardianNightPhase");
+  // } else if(game.state === "summaryNightPhase") {
+  //   Session.set("currentView", "summaryNightPhase")
+  // } else if(game.state === "summaryDayPhase") {
+  //   Session.set("currentView", "summaryDayPhase")
   } else if (game.state === "dayPhase") {
     Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
@@ -591,22 +593,29 @@ Template.nightPhaseVillain.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
   players: getAllCurrentPlayers,
-  locations: function () {
-    return locations;
-  },
-  gameFinished: function () {
-    var timeRemaining = getTimeRemaining();
-
-    return timeRemaining === 0;
-  },
-  timeRemaining: function () {
-    var timeRemaining = getTimeRemaining();
-
-    return moment(timeRemaining).format('mm[<span>:</span>]ss');
-  },
-  isVillain: function () { // Temporary until isVillain logic is fixed in player object
+  isVillain: function () { 
     var player = getCurrentPlayer();
     if(player.role === 'villain') {
+      return true;
+    }
+    return false;
+  },
+  isGuardian: function () { 
+    var player = getCurrentPlayer();
+    if(player.role === 'guardian') {
+      return true;
+    }
+    return false;
+  }
+});
+
+Template.guardianNightPhase.helpers({
+  game: getCurrentGame,
+  player: getCurrentPlayer,
+  players: getAllCurrentPlayers,
+  isGuardian: function () { 
+    var player = getCurrentPlayer();
+    if(player.role === 'guardian') {
       return true;
     }
     return false;

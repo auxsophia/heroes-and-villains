@@ -193,8 +193,8 @@ getAllCurrentPlayers = function (gameID) {
 
 function clearVotes(gameID) {
   var players = getAllCurrentPlayers(gameID);
-  players.forEach(function(player) {
-    Players.update(player._id, { $set: {selectedPlayerID: null}});
+  players.forEach(function (player) {
+    Players.update(player._id, { $set: { selectedPlayerID: null } });
   });
 }
 
@@ -206,7 +206,6 @@ function processVote(gameID) {
 
   switch (game.state) {
     case "nightPhaseVillain":
-      nextState = "dayPhase";
       // Consider votes from villains who are ready and alive
       votingVillains = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'villain' }, { 'isAlive': true }] }).fetch();
       // must be unanimous
@@ -220,15 +219,27 @@ function processVote(gameID) {
       });
       if (isUnanimous(votes)) {
         var gameLog = game.gameLog;
-        var playerKilledID = votes[0];
-        var playerKilledName = Players.findOne(playerKilledID).name;
-        gameLog.push(playerKilledName + " was killed.");
-        Players.update(playerKilledID, {
-          $set: { isAlive: false },
-        });
-        Games.update(game._id, { $set: { state: nextState, gameLog: gameLog } });
+        var pendingKilledPlayerID = votes[0];
+        Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
       }
+      break;
+    case "guardianNightPhase":
+      // Consider votes from villains who are ready and alive
+      guardianVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'guardian' }, { 'isAlive': true }] }).fetch();
+      var protectedPlayerID = guardianVote[0].selectedPlayerID;
+      var gameLog = game.gameLog;
+      if (protectedPlayerID == game.pendingKill) {
+        gameLog.push("No hero was killed");
+      } else {
+        var playerKilledName = Players.findOne(game.pendingKill).name;
+        gameLog.push(playerKilledName + " was killed.");
+        Players.update(game.pendingKill, {
+          $set: { isAlive: false },
+        });
+      }
+      Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog } });
+      clearVotes(game._id);
       break;
     case "dayPhase":
       // Consider votes from everyone alive

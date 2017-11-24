@@ -164,6 +164,37 @@
   </div>
 </template>
 
+<template name="guardianNightPhase">
+  <h4>
+    It is night... {{currentPlayerName}}
+  </h4>
+
+  <div class="status-container">
+    <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
+    <div class="status-container-content">{{_ "ui.you are a"}}
+      <div class="player-status">
+        {{_ (concat "ui." player.role)}}
+      </div>
+
+    </div>
+  </div>
+  {{#if isGuardian}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
+  {{else}}
+    {{_ "ui.playerAsleep" }}
+  {{/if}}
+
+  <div class="u-cf"></div>
+
+  <hr>
+
+  <div class="button-container">
+    <button class="btn-end">{{_ "ui.end game" }}</button>
+    <button class="btn-leave">{{_ "ui.leave game" }}</button>
+  </div>
+</template>
+
 <template name="createGame">
   <h4>
     {{#if isLoading }}
