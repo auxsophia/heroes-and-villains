@@ -12,6 +12,17 @@
     </li>
     {{/each}}
   </ul>
+
+  {{#if isGuardian}}
+<hr>
+<ul>
+  {{#each entry in guardianLog}}
+  <li>
+    {{entry}}
+  </li>
+  {{/each}}
+</ul>
+{{/if}}
   <hr> {{> Template.dynamic template=whichView}} {{> playerVote}}
 
 </template>

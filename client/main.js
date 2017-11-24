@@ -327,6 +327,13 @@ Template.registerHelper('currentPlayerName', () => {
 Template.registerHelper('gameLog', () => {
     return getCurrentGame().gameLog;
 });
+Template.registerHelper('guardianLog', () => {
+  return getCurrentGame().guardianLog;
+});
+Template.registerHelper('isGuardian', () => {
+  return getCurrentPlayer().role == 'guardian';
+});
+
 
 Template.startMenu.events({
   'click #btn-new-game': function () {

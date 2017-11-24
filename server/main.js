@@ -147,6 +147,7 @@ Games.find({
         state: 'roleView',
         location: location,
         gameLog: [],
+        guardianLog: [],
         endTime: gameEndTime,
         paused: false,
         pausedTime: null
@@ -228,7 +229,10 @@ function processVote(gameID) {
       // Consider votes from villains who are ready and alive
       guardianVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'guardian' }, { 'isAlive': true }] }).fetch();
       var protectedPlayerID = guardianVote[0].selectedPlayerID;
+      var protectedPlayerName = Players.findOne(protectedPlayerID).name;
       var gameLog = game.gameLog;
+      var guardianLog = game.guardianLog;
+      guardianLog.push("Protected " + protectedPlayerName);
       if (protectedPlayerID == game.pendingKill) {
         gameLog.push("No hero was killed");
       } else {
@@ -238,7 +242,7 @@ function processVote(gameID) {
           $set: { isAlive: false },
         });
       }
-      Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog } });
+      Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
       clearVotes(game._id);
       break;
     case "dayPhase":
