@@ -2,7 +2,7 @@
     {{#if isReady }}
       {{_ "ui.waiting for players"}}
     {{else}}
-      <div class="">
+      <div class="">{{currentPlayerName}}
         <!--<input type="text" id="player-name" name="playerName" placeholder='{{_ "ui.enter your name" }}'>-->
         <h5>{{_ "ui.players" }}</h5>
         <ul class="ingame-player-list">

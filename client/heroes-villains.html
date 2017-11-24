@@ -51,7 +51,7 @@
   <h4>
     {{#if isLoading }}
     <span class="spinner"></span>
-    {{else}} {{_ "ui.waiting for players" }} {{/if}}
+    {{else}} {{_ "ui.waiting for players" }} {{currentPlayerName}} {{/if}}
   </h4>
 
   <div class="access-code">
@@ -113,7 +113,7 @@
 </template>
 
 <template name="roleView">
-  <h3>{{_ "ui.game has started"}}</h3>
+  <h3>{{_ "ui.game has started"}} {{currentPlayerName}}</h3>
   <h4>{{_ "ui.you are a"}} {{_ (concat "ui." player.role)}}</h4>
   <p>{{_ (concat "instructions." player.role)}}</p>
   {{#if isModerator}}
@@ -123,7 +123,7 @@
 
 <template name="nightPhaseVillain">
   <h4>
-    It is night...
+    It is night... {{currentPlayerName}}
   </h4>
 
   <div class="status-container">

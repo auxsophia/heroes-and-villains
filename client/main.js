@@ -319,6 +319,9 @@ Template.footer.events({
 Template.registerHelper('concat', (string1, string2) => {
   return string1 + string2;
 });
+Template.registerHelper('currentPlayerName', () => {
+    return getCurrentPlayer().name
+});
 
 Template.startMenu.events({
   'click #btn-new-game': function () {
