@@ -322,6 +322,9 @@ Template.registerHelper('concat', (string1, string2) => {
 Template.registerHelper('currentPlayerName', () => {
     return getCurrentPlayer().name
 });
+Template.registerHelper('gameLog', () => {
+    return getCurrentGame().gameLog;
+});
 
 Template.startMenu.events({
   'click #btn-new-game': function () {
@@ -689,15 +692,11 @@ Template.playerVote.events({
     var vSelectedPlayerID = $(this)[0]._id;
     // Keep track of the current players selection
     var player = getCurrentPlayer();
-    Players.update(player._id, {
-      $set: { selectedPlayerID: vSelectedPlayerID },
-    });
-    // Then update the suspicionScoreCount for all players
-    var players = getAllCurrentPlayers();
-    players.forEach(function (player) {
-      Players.update(player._id, {
-        $set: { suspicionScoreCount: Players.find({ selectedPlayerID: player._id }).count() }
-      });
+    game = getCurrentGame();
+    Meteor.call('makeVote', game._id, player._id, vSelectedPlayerID, function(err, response) {
+      if (err) {
+        console.error("error Voting");
+      }
     });
   },
   'click .btn-player-ready': function (event) {
@@ -745,38 +744,7 @@ Template.telepathPhase.events({
 });
 
 // If players are ready transition to appropriate state
-function checkAllPlayerIsReady() {
-  var game = getCurrentGame();
-  var isReady = true;
-  var nextState = null;
-  var players = null;
 
-  if (game.state === "nightPhaseVillain") {
-    nextState = "summaryNightPhase";
-    // Consider votes from villains who are ready and alive
-    players = Players.find({ $and: [{ 'gameID': game._id }, {'role':'villain'}, {'isAlive':true} ] }).fetch();
-  } else if (game.state === "dayPhase") {
-    nextState = "summaryDayPhase";
-    // Consider votes from eveyone alive
-    players = Players.find({ $and:[{ 'gameID': game._id }, {'isAlive':true}]}).fetch();
-  }
-
-  if(players != null && nextState != null) {
-    players.forEach(function (player) {
-      // Check that all players are ready
-      if(!player.isReady){
-        isReady = false;
-        return;
-      }
-    });
-
-    // If all players are ready and next state selected then update game state
-    if(isReady && (nextState != null)) {
-      Games.update(game._id, { $set: { state: nextState } });
-    }
-  }
-  return;
-}
 /*
       player-vote end
 */
@@ -790,18 +758,18 @@ Template.summaryNightPhase.nameOfKilledPlayer = function (){
   return player.name;
 }
 
-Template.summaryNightPhase.rendered = function() {
-  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
-  // Show results screen for 5 seconds before switching to day phase
-  Meteor.setTimeout(function (){
-    setPlayerNotAlive();
-    resetPlayerVotingVariables();
-    if(!isWinCondition()){
-      game = getCurrentGame();
-      Games.update(game._id, { $set: { state: "dayPhase" } });
-    }
-  }, 5000);
-}
+// Template.summaryNightPhase.rendered = function() {
+//   // Set player with highest suspicionScoreCount to not alive before resetting voting variables
+//   // Show results screen for 5 seconds before switching to day phase
+//   Meteor.setTimeout(function (){
+//     setPlayerNotAlive();
+//     resetPlayerVotingVariables();
+//     if(!isWinCondition()){
+//       game = getCurrentGame();
+//       Games.update(game._id, { $set: { state: "dayPhase" } });
+//     }
+//   }, 5000);
+// }
 
 /*
       summary-night-phase end
@@ -816,18 +784,18 @@ Template.summaryDayPhase.nameOfKilledPlayer = function (){
   return player.name;
 }
 
-Template.summaryDayPhase.rendered = function() {
-  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
-  // Show results screen for 5 seconds before switching to day phase
-  Meteor.setTimeout(function (){
-    setPlayerNotAlive();
-    resetPlayerVotingVariables();
-    if(!isWinCondition()){
-      game = getCurrentGame();
-      Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
-    }
-  }, 5000);
-}
+// Template.summaryDayPhase.rendered = function() {
+//   // Set player with highest suspicionScoreCount to not alive before resetting voting variables
+//   // Show results screen for 5 seconds before switching to day phase
+//   Meteor.setTimeout(function (){
+//     setPlayerNotAlive();
+//     resetPlayerVotingVariables();
+//     if(!isWinCondition()){
+//       game = getCurrentGame();
+//       Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
+//     }
+//   }, 5000);
+// }
 
 /*
       summary-day-phase end
@@ -852,15 +820,6 @@ Template.heroWin.events ({
 /*
     Utility Functions
 */
-
-//TODO: BROKEN CHECK FOR TIES IN WHICH CASE REPORT NO ONE DIED AND CONTINUE
-function setPlayerNotAlive() {
-  //Set player with highest suspicionScoreCount to not alive
-  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
-  Players.update(player._id, {
-    $set: { isAlive: false },
-  });
-}
 
 function resetPlayerVotingVariables (){
   // Reset suspicionScoreCount, selectedPlayerID, isReady to default values after each voting phase

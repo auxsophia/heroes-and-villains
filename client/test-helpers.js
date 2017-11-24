@@ -28,8 +28,6 @@ Template.addTestPlayers.events({
           var url = 'http://localhost:3000' + '/' + game.accessCode + '/';
           var win = window.open(url);
           win.focus();
-
-          generateNewPlayer(game, fakePlayerNames.pop());
         } else {
             console.error("Ran out of names, couldn't add another fake player");
         }

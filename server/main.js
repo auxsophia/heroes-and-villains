@@ -77,7 +77,7 @@ function assignRoles(players, location, numVillains) {
     }
   });
 
-  shuffledPlayers.forEach(function(player) {
+  shuffledPlayers.forEach(function (player) {
     Players.update(player._id, {
       $set: {
         role: "hero",
@@ -95,6 +95,9 @@ Meteor.startup(function () {
   // Delete all games and players at startup
   Games.remove({});
   Players.remove({});
+  Meteor.methods({
+    makeVote: playerSetVote
+  })
 });
 
 var MyCron = new Cron(60000);
@@ -143,6 +146,7 @@ Games.find({
       $set: {
         state: 'roleView',
         location: location,
+        gameLog: [],
         endTime: gameEndTime,
         paused: false,
         pausedTime: null
@@ -150,3 +154,121 @@ Games.find({
     });
   }
 });
+
+function isUnanimous(votes) {
+  var previousVote = "";
+  for (index = 0; index < votes.length; index++) {
+    var currentVote = votes[index];
+    if (currentVote == "no vote" || (previousVote != "" && currentVote != previousVote)) {
+      return false;
+    }
+    previousVote = currentVote;
+  }
+  return true;
+}
+function hasMajority(votes) {
+  var majorityNumber = Math.floor(votes.length / 2) + 1;
+  voteCount = [];
+  votes.forEach(function (value) {
+    if (value != "no vote") {
+      if (!voteCount[value]) {
+        voteCount[value] = 1;
+      } else {
+        voteCount[value] += 1;
+      }
+    }
+  });
+  killedID = false;
+  for (var playerID in voteCount) {
+    if (+voteCount[playerID] >= majorityNumber) {
+      killedID = playerID;
+    }
+  }
+  return killedID;
+}
+
+getAllCurrentPlayers = function (gameID) {
+  return Players.find({ 'gameID': gameID }, { 'sort': { 'createdAt': 1 } }).fetch();
+}
+
+function clearVotes(gameID) {
+  var players = getAllCurrentPlayers(gameID);
+  players.forEach(function(player) {
+    Players.update(player._id, { $set: {selectedPlayerID: null}});
+  });
+}
+
+function processVote(gameID) {
+  var game = Games.findOne(gameID);
+  var isReady = true;
+  var nextState = null;
+  var players = null;
+
+  switch (game.state) {
+    case "nightPhaseVillain":
+      nextState = "dayPhase";
+      // Consider votes from villains who are ready and alive
+      votingVillains = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'villain' }, { 'isAlive': true }] }).fetch();
+      // must be unanimous
+      votes = [];
+      votingVillains.forEach(function (player) {
+        if (player.selectedPlayerID) {
+          votes.push(player.selectedPlayerID);
+        } else {
+          votes.push("no vote");
+        }
+      });
+      if (isUnanimous(votes)) {
+        var gameLog = game.gameLog;
+        var playerKilledID = votes[0];
+        var playerKilledName = Players.findOne(playerKilledID).name;
+        gameLog.push(playerKilledName + " was killed.");
+        Players.update(playerKilledID, {
+          $set: { isAlive: false },
+        });
+        Games.update(game._id, { $set: { state: nextState, gameLog: gameLog } });
+        clearVotes(game._id);
+      }
+      break;
+    case "dayPhase":
+      // Consider votes from everyone alive
+      // Has majority voted for one player
+      votingPlayers = Players.find({ $and: [{ 'gameID': game._id }, { 'isAlive': true }] }).fetch();
+      votes = [];
+      votingPlayers.forEach(function (player) {
+        if (player.selectedPlayerID) {
+          votes.push(player.selectedPlayerID);
+        } else {
+          votes.push("no vote");
+        }
+      });
+      var majorityVotedID = hasMajority(votes);
+      if (majorityVotedID) {
+        var gameLog = game.gameLog;
+        var playerLockedUpName = Players.findOne(majorityVotedID).name;
+        gameLog.push(playerLockedUpName + " was locked up.");
+        Players.update(majorityVotedID, {
+          $set: { isAlive: false },
+        });
+        clearVotes();
+        Games.update(game._id, { $set: { state: "nightPhase", gameLog: gameLog } });
+      } else {
+
+      }
+  }
+}
+
+function playerSetVote(gameID, voterID, selectedPlayerID) {
+  console.log("VOTE -- gameID: " + gameID + " voterID: " + voterID + " selectedPlayerID: " + selectedPlayerID);
+  Players.update(voterID, {
+    $set: { selectedPlayerID: selectedPlayerID },
+  });
+  // Then update the suspicionScoreCount for all players
+  var players = getAllCurrentPlayers(gameID);
+  players.forEach(function (player) {
+    Players.update(player._id, {
+      $set: { suspicionScoreCount: Players.find({ selectedPlayerID: player._id }).count() }
+    });
+  });
+  processVote(gameID);
+}

@@ -1,11 +1,17 @@
 <template name="dayPhase">
-    <h4>
+  <h4>
     {{_ "ui.dayPhaseHeader" }} {{currentPlayerName}}
-    </h4>
-    {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
-  
-    <hr>
-    {{> Template.dynamic template=whichView}}
-    {{> playerVote}}
+  </h4>
+  {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
 
-  </template>
+  <hr>
+  <ul>
+    {{#each entry in gameLog}}
+    <li>
+      {{entry}}
+    </li>
+    {{/each}}
+  </ul>
+  <hr> {{> Template.dynamic template=whichView}} {{> playerVote}}
+
+</template>
