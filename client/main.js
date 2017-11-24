@@ -850,6 +850,7 @@ Template.heroWin.events ({
     Utility Functions
 */
 
+//TODO: BROKEN CHECK FOR TIES IN WHICH CASE REPORT NO ONE DIED AND CONTINUE
 function setPlayerNotAlive() {
   //Set player with highest suspicionScoreCount to not alive
   var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
@@ -878,7 +879,8 @@ function isWinCondition(){
     Games.update(game._id, { $set: { state: "heroWin" } });
     return true;
   }
-  if(heroAliveCount === 0) {
+  console.log(heroAliveCount+" "+villainAliveCount);
+  if(heroAliveCount <= villainAliveCount) {
     Games.update(game._id, { $set: { state: "villainWin" } });
     return true;
   }
