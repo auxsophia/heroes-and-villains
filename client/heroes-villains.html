@@ -48,10 +48,11 @@
 </template>
 
 <template name="lobby">
+ {{> playerHeader}}
   <h4>
     {{#if isLoading }}
     <span class="spinner"></span>
-    {{else}} {{_ "ui.waiting for players" }} {{currentPlayerName}} {{/if}}
+    {{else}} {{_ "ui.waiting for players" }}{{/if}}
   </h4>
 
   <div class="access-code">
@@ -122,8 +123,9 @@
 </template>
 
 <template name="nightPhaseVillain">
+  {{> playerHeader}}
   <h4>
-    It is night... {{currentPlayerName}}
+    It is night...
   </h4>
 
   <div class="status-container">
@@ -136,17 +138,6 @@
     </div>
   </div>
 
-<!--
-  <h5>{{_ "ui.players" }}</h5>
-  <ul class="ingame-player-list">
-    {{#each players }}
-    <li>
-      <div class="player-name">{{name}} ({{_ (concat "ui." role)}})
-      </div>
-    </li>
-    {{/each}}
-  </ul>
--->
   {{#if isVillain}}
     {{> Template.dynamic template=whichView}}
     {{> playerVote}}
@@ -165,8 +156,9 @@
 </template>
 
 <template name="guardianNightPhase">
+  {{> playerHeader}}
   <h4>
-    It is night... {{currentPlayerName}}
+    It is night...
   </h4>
 
   <div class="status-container">
@@ -192,6 +184,13 @@
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
+  </div>
+</template>
+
+<template name="playerHeader">
+  <div class="playerHeader">
+    {{#if currentPlayer.name}}<span class="name">Name: {{currentPlayer.name}}</span>{{/if}}
+    {{#if currentPlayer.role}}<span class="role"> Role: {{currentPlayer.role}}</span>{{/if}}
   </div>
 </template>
 

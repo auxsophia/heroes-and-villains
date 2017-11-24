@@ -333,6 +333,9 @@ Template.registerHelper('guardianLog', () => {
 Template.registerHelper('isGuardian', () => {
   return getCurrentPlayer().role == 'guardian';
 });
+Template.registerHelper('currentPlayer', () => {
+  return getCurrentPlayer();
+});
 
 
 Template.startMenu.events({
