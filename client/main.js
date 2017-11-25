@@ -1,6 +1,5 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-
 import './heroes-villains.html';
 import './test-helpers.html';
 import './templates/day-phase.html';
@@ -206,7 +205,7 @@ function trackGameState() {
     Session.set("currentView", "startMenu");
     return;
   }
-
+  
   if (game.state === "roleView") {
     Session.set("currentView", "roleView");
   } else if (game.state === "nightPhaseVillain") {
@@ -333,9 +332,25 @@ Template.registerHelper('guardianLog', () => {
 Template.registerHelper('isGuardian', () => {
   return getCurrentPlayer().role == 'guardian';
 });
+Template.registerHelper('isModerator', () => {
+  return getCurrentPlayer()._id == getCurrentGame().moderator;
+});
 Template.registerHelper('currentPlayer', () => {
   return getCurrentPlayer();
 });
+
+
+Template.registerHelper('soundMessage', (name) => {
+  switch(name) {
+    case 'villainInstructions':
+    var s = new buzz.sound('/sounds/villain_instructions.m4a');
+    s.play();
+    break;
+  }
+
+});
+
+
 
 
 Template.startMenu.events({

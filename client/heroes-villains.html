@@ -128,6 +128,10 @@
     It is night...
   </h4>
 
+  {{#if isModerator}}
+  {{ soundMessage "villainInstructions"}}
+  {{/if}}
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
