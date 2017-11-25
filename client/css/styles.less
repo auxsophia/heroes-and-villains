@@ -442,7 +442,7 @@ input[type="text"] {
     box-sizing: border-box;
     width: 4rem;
     height: 48px;
-    
+
 }
 
 button:disabled{
@@ -450,11 +450,22 @@ button:disabled{
 }
 
 div.gameLog,
-div.guardianLog { 
+div.guardianLog {
     text-align: left;
 }
 .gameLog li,
 .guardianLog li {
+  list-style-type: none;
+  display: block;
+  margin-bottom: 0px;
+}
+
+div.gameLog,
+div.telepathLog {
+    text-align: left;
+}
+.gameLog li,
+.telepathLog li {
   list-style-type: none;
   display: block;
   margin-bottom: 0px;
