@@ -13,6 +13,9 @@
   {{#if isTelepath}}
     {{> telepathLog}}
   {{/if}}
-  <hr> {{> Template.dynamic template=whichView}} {{> playerVote}}
-
+  <hr>
+  {{#if isAlive}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
+  {{/if}}
 </template>

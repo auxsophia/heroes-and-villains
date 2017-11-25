@@ -751,6 +751,10 @@ Template.dayPhase.helpers({
   suspicionScoreCount: function () {
     var player = getCurrentPlayer();
     return player.suspicionScoreCount;
+  },
+  isAlive: function () {
+    var player = getCurrentPlayer();
+    return player.isAlive;
   }
 });
 
