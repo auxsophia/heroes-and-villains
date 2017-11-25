@@ -336,7 +336,7 @@ Template.registerHelper('isGuardian', () => {
 });
 Template.registerHelper('isModerator', () => {
   return getCurrentPlayer()._id == getCurrentGame().moderator;
-
+});
 Template.registerHelper('telepathLog', () => {
   return getCurrentGame().telepathLog;
 });
