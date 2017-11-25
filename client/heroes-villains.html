@@ -85,9 +85,8 @@
   <ol class="lobby-player-list">
     {{#each players }}
     <li>
-      {{ name }} {{#if isModerator}}
-      <i class="fa fa-star"></i>
-      {{/if}} {{#if isCurrent }}
+      {{ name }} 
+      {{#if isCurrent }}
       <a href="#" class="btn-edit-player" data-player-id="{{ _id }}">
         <i class="fa fa-pencil"></i>
       </a>
