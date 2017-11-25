@@ -354,6 +354,18 @@ Template.registerHelper('soundMessage', (name) => {
     var s = new buzz.sound('/sounds/villain_instructions.m4a');
     s.play();
     break;
+    case 'guardianInstructions':
+    var s = new buzz.sound('/sounds/guardian_instructions.m4a');
+    s.play();
+    break;
+    case 'telepathInstructions':
+    var s = new buzz.sound('/sounds/telepath_instructions.m4a');
+    s.play();
+    break;
+    case 'dayInstructions':
+    var s = new buzz.sound('/sounds/day_instructions.m4a');
+    s.play();
+    break;
   }
 
 });

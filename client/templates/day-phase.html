@@ -3,6 +3,11 @@
   <h4>
     {{_ "ui.dayPhaseHeader" }}
   </h4>
+  
+  {{#if isModerator}}
+  {{ soundMessage "dayInstructions"}}
+  {{/if}}
+
   {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
 
   {{> gameLog}}
