@@ -149,6 +149,7 @@ Games.find({
         location: location,
         gameLog: [],
         guardianLog: [],
+        telepathLog: [],
         endTime: gameEndTime,
         paused: false,
         pausedTime: null
@@ -237,7 +238,7 @@ function processVote(gameID) {
       if (isUnanimous(votes)) {
         var gameLog = game.gameLog;
         var pendingKilledPlayerID = votes[0];
-        Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, pendingKill: pendingKilledPlayerID } });
+        Games.update(game._id, { $set: { state: "telepathNightPhase", gameLog: gameLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
         checkWinCondition(game._id);
       }
@@ -263,6 +264,18 @@ function processVote(gameID) {
       Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
       clearVotes(game._id);
       break;
+    case "telepathNightPhase":
+        // Consider votes from telepaths (currently only one telepath at a time) who are ready and alive
+        telepathVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'telepath' }, { 'isAlive': true }] }).fetch();
+        var readPlayerID = telepathVote[0].selectedPlayerID;
+        var readPlayerName = Players.findOne(readPlayerID).name;
+        var readPlayerRole = Players.findOne(readPlayerID).role;
+        console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
+        var telepathLog = game.telepathLog;
+        telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: readPlayerName + " is a " + readPlayerRole});
+        Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
+        clearVotes(game._id);
+        break;
     case "dayPhase":
       // Consider votes from everyone alive
       // Has majority voted for one player

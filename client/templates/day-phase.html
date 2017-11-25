@@ -4,12 +4,18 @@
     {{_ "ui.dayPhaseHeader" }}
   </h4>
   {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
-  
+
   {{> gameLog}}
-    
+
   {{#if isGuardian}}
     {{> guardianLog}}
   {{/if}}
-  <hr> {{> Template.dynamic template=whichView}} {{> playerVote}}
-
+  {{#if isTelepath}}
+    {{> telepathLog}}
+  {{/if}}
+  <hr>
+  {{#if isAlive}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
+  {{/if}}
 </template>

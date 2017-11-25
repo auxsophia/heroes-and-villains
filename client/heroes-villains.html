@@ -191,6 +191,40 @@
   </div>
 </template>
 
+<template name="telepathNightPhase">
+  {{> playerHeader}}
+  <h4>
+    It is night...
+  </h4>
+
+  <div class="status-container">
+    <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
+    <div class="status-container-content">{{_ "ui.you are a"}}
+      <div class="player-status">
+        {{_ (concat "ui." player.role)}}
+      </div>
+
+    </div>
+  </div>
+  {{#if isTelepath}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
+  {{else}}
+    {{_ "ui.playerAsleep" }}
+  {{/if}}
+
+  <div class="u-cf"></div>
+
+  {{_ playerRole}}
+
+  <hr>
+
+  <div class="button-container">
+    <button class="btn-end">{{_ "ui.end game" }}</button>
+    <button class="btn-leave">{{_ "ui.leave game" }}</button>
+  </div>
+</template>
+
 <template name="playerHeader">
   <div class="playerHeader">
     {{#if currentPlayer.name}}<span class="name">Name: {{currentPlayer.name}}</span>{{/if}}
@@ -224,6 +258,18 @@
       </div>
 </template>
 
+<template name="telepathLog">
+    <div class="telepathLog">
+        Your Telepath Actions
+        <ul>
+          {{#each entry in telepathLog}}
+          <li>
+            Round {{entry.roundNumber}} -  {{entry.message}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+</template>
 
 
 <template name="createGame">
