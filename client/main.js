@@ -205,7 +205,7 @@ function trackGameState() {
     Session.set("currentView", "startMenu");
     return;
   }
-  
+
   if (game.state === "roleView") {
     Session.set("currentView", "roleView");
   } else if (game.state === "nightPhaseVillain") {
@@ -222,9 +222,7 @@ function trackGameState() {
     Session.set("currentView", "dayPhase");
   } else if (game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
-  } else if (game.state === "telepathNightPhase") {
-    Session.set("currentView", "telepathNightPhase")
-  } else if (game.state ==="villainWin") {
+  }  else if (game.state ==="villainWin") {
     Session.set("currentView","villainWin")
   } else if (game.state ==="heroWin") {
     Session.set("currentView","heroWin")
@@ -688,20 +686,6 @@ Template.telepathNightPhase.helpers({
       return true;
     }
     return false;
-  },
-  playerRole: function () {
-    var player = getCurrentPlayer();
-    if (player.isReady) {
-      var selectedPlayer = Players.find({ _id: player.selectedPlayerID });
-      return selectedPlayer.role;
-      telepathVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'telepath' }, { 'isAlive': true }] }).fetch();
-      var readPlayerID = telepathVote[0].selectedPlayerID;
-      var readPlayerName = Players.findOne(readPlayerID).name;
-      var readPlayerRole = Players.findOne(readPlayerID).role;
-      return readPlayerName + " is a " + readPlayerRole;
-    } else {
-      return "Choose a player to mindread.";
-    }
   }
 });
 
@@ -837,15 +821,15 @@ Template.summaryNightPhase.nameOfKilledPlayer = function (){
   return player.name;
 }
 
-// Template.summaryNightPhase.rendered = function() {
-//   // Set player with highest suspicionScoreCount to not alive before resetting voting variables
-//   // Show results screen for 5 seconds before switching to day phase
-//   Meteor.setTimeout(function (){
-//     setPlayerNotAlive();
-//     resetPlayerVotingVariables();
-//     if(!isWinCondition()){
-//       game = getCurrentGame();
-//       Games.update(game._id, { $set: { state: "dayPhase" } });
+// template.summarynightphase.rendered = function() {
+//   // set player with highest suspicionscorecount to not alive before resetting voting variables
+//   // show results screen for 5 seconds before switching to day phase
+//   meteor.settimeout(function (){
+//     setplayernotalive();
+//     resetplayervotingvariables();
+//     if(!iswincondition()){
+//       game = getcurrentgame();
+//       games.update(game._id, { $set: { state: "dayphase" } });
 //     }
 //   }, 5000);
 // }
@@ -863,18 +847,18 @@ Template.summaryDayPhase.nameOfKilledPlayer = function (){
   return player.name;
 }
 
-// Template.summaryDayPhase.rendered = function() {
-//   // Set player with highest suspicionScoreCount to not alive before resetting voting variables
-//   // Show results screen for 5 seconds before switching to day phase
-//   Meteor.setTimeout(function (){
-//     setPlayerNotAlive();
-//     resetPlayerVotingVariables();
-//     if(!isWinCondition()){
-//       game = getCurrentGame();
-//       Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
-//     }
-//   }, 5000);
-// }
+Template.summaryDayPhase.rendered = function() {
+  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
+  // Show results screen for 5 seconds before switching to day phase
+  Meteor.setTimeout(function (){
+    setPlayerNotAlive();
+    resetPlayerVotingVariables();
+    if(!isWinCondition()){
+      game = getCurrentGame();
+      Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
+    }
+  }, 5000);
+}
 
 /*
       summary-day-phase end

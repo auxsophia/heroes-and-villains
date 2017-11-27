@@ -85,7 +85,7 @@
   <ol class="lobby-player-list">
     {{#each players }}
     <li>
-      {{ name }} 
+      {{ name }}
       {{#if isCurrent }}
       <a href="#" class="btn-edit-player" data-player-id="{{ _id }}">
         <i class="fa fa-pencil"></i>
@@ -130,28 +130,28 @@
   {{#if isModerator}}
   {{ soundMessage "villainInstructions"}}
   {{/if}}
-  
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
       <div class="player-status">
         {{_ (concat "ui." player.role)}}
       </div>
-      
+
     </div>
   </div>
-  
+
   {{#if isVillain}}
   {{> Template.dynamic template=whichView}}
   {{> playerVote}}
   {{else}}
   {{_ "ui.playerAsleep" }}
   {{/if}}
-  
+
   <div class="u-cf"></div>
-  
+
   <hr>
-  
+
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
@@ -163,32 +163,32 @@
   <h4>
     It is night...
   </h4>
-  
+
   {{#if isModerator}}
   {{ soundMessage "guardianInstructions"}}
   {{/if}}
-  
-  
+
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
       <div class="player-status">
         {{_ (concat "ui." player.role)}}
       </div>
-      
+
     </div>
   </div>
   {{#if isGuardian}}
-  {{> Template.dynamic template=whichView}}
-  {{> playerVote}}
+    {{> Template.dynamic template=whichView}}
+    {{> playerVote}}
   {{else}}
-  {{_ "ui.playerAsleep" }}
+    {{_ "ui.playerAsleep" }}
   {{/if}}
-  
+
   <div class="u-cf"></div>
-  
+
   <hr>
-  
+
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
@@ -203,7 +203,7 @@
   {{#if isModerator}}
   {{ soundMessage "telepathInstructions"}}
   {{/if}}
-  
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
@@ -215,14 +215,14 @@
   </div>
   {{#if isTelepath}}
     {{> Template.dynamic template=whichView}}
+    {{> telepathLog}}
     {{> playerVote}}
+    <p>Choose a player to mindread.</p>
   {{else}}
     {{_ "ui.playerAsleep" }}
   {{/if}}
 
   <div class="u-cf"></div>
-
-  {{_ playerRole}}
 
   <hr>
 
