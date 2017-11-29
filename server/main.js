@@ -227,16 +227,16 @@ function checkWinCondition(gameID) {
 function getRandomNumberBetween(low, high) {
   return Math.random() * (high-low) + low;
 }
-function wrapUpNightPhase(game) {
+function wrapUpDayOrNightPhase(game, currentPhase, nextPhase) {
   clearVotes(game._id);
   var gameLog = game.gameLog;
   var didGameEnd = checkWinCondition(game._id);
   if (didGameEnd){
     var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
-    gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: whoWon + " Win!" })
-    Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog } });
+    gameLog.push({ phase: currentPhase, roundNumber: game.roundNumber, message: whoWon + " Win!" })
+    Games.update(game._id, { $set: { state: didGameEnd, gameLog: gameLog } });
   } else {
-    Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog} });
+    Games.update(game._id, { $set: { state: nextPhase, gameLog: gameLog} });
   }
 }
 
@@ -249,8 +249,8 @@ function wrapUpFailedGuardianPhase(game, guardianLogEntry) {
     $set: { isAlive: false },
   });
   gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: playerKilledName + " was killed." });
-  Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, guardianLog: guardianLog} });
-  wrapUpNightPhase(game);
+  Games.update(game._id, { $set: { gameLog: gameLog, guardianLog: guardianLog} });
+  wrapUpDayOrNightPhase(game, "Night", "dayPhase");
 }
 
 function wrapUpTelepathPhase(game, telepathLogEntry) {
@@ -313,7 +313,7 @@ function processVote(gameID) {
            // if Guardian is dead set timer for end of telapath round
         if (guardianIsDead(game._id)) {
           Meteor.setTimeout(function() {
-            wrapUpTelepathPhase(game, "You were dead, did nothing.");
+            wrapUpFailedGuardianPhase(game, "You were dead, did nothing.");
           }, getRandomNumberBetween(12000,17000));
         }
           break;
@@ -331,7 +331,7 @@ function processVote(gameID) {
       } else {
         wrapUpFailedGuardianPhase(game, "You chose " + protectedPlayerName + " but " + playerKilledName + " was killed." );
       }
-      wrapUpNightPhase(game);
+      wrapUpDayOrNightPhase(game, "Night", "dayPhase");
 
       break;
     case "dayPhase":
@@ -354,15 +354,7 @@ function processVote(gameID) {
         Players.update(majorityVotedID, {
           $set: { isAlive: false },
         });
-        clearVotes();
-        var didGameEnd = checkWinCondition(game._id);
-        if (didGameEnd){
-          var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
-          gameLog.push({ phase: "Day", roundNumber: game.roundNumber, message: whoWon + " Win!" })
-          Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog } });
-        } else {
-          Games.update(gameID, { $set: { state: "villainNightPhase", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
-        }
+        wrapUpDayOrNightPhase(game, "Day", "villainNightPhase");
       }
   }
 }
