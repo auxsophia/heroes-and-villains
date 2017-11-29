@@ -244,10 +244,10 @@ function wrapUpFailedGuardianPhase(game, guardianLogEntry) {
   var playerKilledName = Players.findOne(game.pendingKill).name;
   var guardianLog = game.guardianLog;
   var gameLog = game.gameLog;
-  guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: guardianLogEntry});
   Players.update(game.pendingKill, {
     $set: { isAlive: false },
   });
+  guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: guardianLogEntry});
   gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: playerKilledName + " was killed." });
   Games.update(game._id, { $set: { gameLog: gameLog, guardianLog: guardianLog} });
   wrapUpDayOrNightPhase(game, "Night", "dayPhase");
