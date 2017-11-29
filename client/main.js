@@ -621,6 +621,13 @@ Template.lobby.rendered = function (event) {
   qrcodesvg.draw();
 };
 
+var restartGame= function () {
+  GAnalytics.event("game-actions", "gameend");
+
+  var game = getCurrentGame();
+  Games.update(game._id, { $set: { state: 'waitingForPlayers' } });
+}
+
 function getTimeRemaining() {
   var game = getCurrentGame();
   var localEndTime = game.endTime - TimeSync.serverOffset();
@@ -689,12 +696,7 @@ Template.telepathNightPhase.events({
 
 Template.villainNightPhase.events({
   'click .btn-leave': leaveGame,
-  'click .btn-end': function () {
-    GAnalytics.event("game-actions", "gameend");
-
-    var game = getCurrentGame();
-    Games.update(game._id, { $set: { state: 'waitingForPlayers' } });
-  },
+  'click .btn-end': restartGame,
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
   },
@@ -780,11 +782,13 @@ Template.playerVote.events({
 */
 
 Template.villainWin.events ({
-  'click .btn-leave': leaveGame
+  'click .btn-leave': leaveGame,
+  'click .btn-end': restartGame,
 });
 
 Template.heroWin.events ({
-  'click .btn-leave': leaveGame
+  'click .btn-leave': leaveGame,
+  'click .btn-end': restartGame,
 });
 
 /*

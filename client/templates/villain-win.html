@@ -3,6 +3,9 @@
     <h2>Villains Win!</h2>
     {{> gameLog}}
     <div class="button-container">
+            {{#if isModerator}}
+            <button class="btn-end">{{_ "ui.restart game" }}</button>
+            {{/if}}
         <button class="btn-leave">{{_ "ui.leave game" }}</button>
     </div>
 </template>
