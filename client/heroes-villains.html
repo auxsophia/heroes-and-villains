@@ -130,7 +130,7 @@
   {{#if isModerator}}
   {{ soundMessage "villainInstructions"}}
   {{/if}}
-
+{{> gameLog}}
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
@@ -167,7 +167,7 @@
   {{#if isModerator}}
   {{ soundMessage "guardianInstructions"}}
   {{/if}}
-
+{{> gameLog}}
 
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
@@ -200,6 +200,7 @@
   <h4>
     It is night...
   </h4>
+  {{> gameLog}}
   {{#if isModerator}}
   {{ soundMessage "telepathInstructions"}}
   {{/if}}
@@ -250,6 +251,15 @@
           {{/each}}
         </ul>
       </div>
+      {{#if isVillain}}
+      {{> villainLog}}
+    {{/if}}
+    {{#if isGuardian}}
+      {{> guardianLog}}
+    {{/if}}
+    {{#if isTelepath}}
+      {{> telepathLog}}
+    {{/if}}
 </template>
 
 <template name="guardianLog">
@@ -270,6 +280,18 @@
         Your Telepath Actions
         <ul>
           {{#each entry in telepathLog}}
+          <li>
+            Round {{entry.roundNumber}} -  {{entry.message}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+</template>
+<template name="villainLog">
+    <div class="villainLog">
+        Your Villain Actions
+        <ul>
+          {{#each entry in villainLog}}
           <li>
             Round {{entry.roundNumber}} -  {{entry.message}}
           </li>

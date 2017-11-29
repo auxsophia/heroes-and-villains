@@ -169,7 +169,6 @@ generateNewPlayer = function (game, name) {
     suspicionScoreCount: 0,
     isAlive: true,
     selectedPlayerID: null,
-    isReady: false // Boolean to check if player is ready to transition to next game state
   };
 
   var playerID = Players.insert(player);
@@ -325,6 +324,12 @@ Template.registerHelper('currentPlayerName', () => {
 });
 Template.registerHelper('gameLog', () => {
     return getCurrentGame().gameLog;
+});
+Template.registerHelper('villainLog', () => {
+  return getCurrentGame().villainLog;
+});
+Template.registerHelper('isVillain', () => {
+  return getCurrentPlayer().role == 'villain';
 });
 Template.registerHelper('guardianLog', () => {
   return getCurrentGame().guardianLog;
@@ -635,58 +640,58 @@ Template.roleView.events({
 Template.nightPhaseVillain.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
-  players: getAllCurrentPlayers,
-  isVillain: function () {
-    var player = getCurrentPlayer();
-    if(player.role === 'villain') {
-      return true;
-    }
-    return false;
-  },
-  isGuardian: function () {
-    var player = getCurrentPlayer();
-    if(player.role === 'guardian') {
-      return true;
-    }
-    return false;
-  },
-  isTelepath: function () {
-    var player = getCurrentPlayer();
-    if(player.role === 'telepath') {
-      return true;
-    }
-    return false;
-  }
+  players: getAllCurrentPlayers
+  // isVillain: function () {
+  //   var player = getCurrentPlayer();
+  //   if(player.role === 'villain') {
+  //     return true;
+  //   }
+  //   return false;
+  // },
+  // isGuardian: function () {
+  //   var player = getCurrentPlayer();
+  //   if(player.role === 'guardian') {
+  //     return true;
+  //   }
+  //   return false;
+  // }
+  // isTelepath: function () {
+  //   var player = getCurrentPlayer();
+  //   if(player.role === 'telepath') {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 });
 
 Template.guardianNightPhase.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
-  players: getAllCurrentPlayers,
-  isGuardian: function () {
-    var player = getCurrentPlayer();
-    if(player.role === 'guardian') {
-      return true;
-    }
-    return false;
-  }
+  players: getAllCurrentPlayers
+  // isGuardian: function () {
+  //   var player = getCurrentPlayer();
+  //   if(player.role === 'guardian') {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 });
 
 Template.telepathNightPhase.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
-  players: getAllCurrentPlayers,
-  isReady: function () {
-    var player = getCurrentPlayer();
-    return player.isReady;
-  },
-  isTelepath: function () {
-    var player = getCurrentPlayer();
-    if(player.role === 'telepath') {
-      return true;
-    }
-    return false;
-  }
+  players: getAllCurrentPlayers
+  // isReady: function () {
+  //   var player = getCurrentPlayer();
+  //   return player.isReady;
+  // },
+  // isTelepath: function () {
+  //   var player = getCurrentPlayer();
+  //   if(player.role === 'telepath') {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 });
 
 Template.telepathNightPhase.events({
@@ -696,13 +701,6 @@ Template.telepathNightPhase.events({
     var player = getCurrentPlayer();
     Players.update(player._id, {
       $set: { selectedPlayerID: vSelectedPlayerID },
-    });
-  },
-
-  'click .btn-player-ready': function (event) {
-    var player = getCurrentPlayer();
-    Players.update(player._id, {
-      $set: { isReady: true },
     });
   }
 });
@@ -778,11 +776,7 @@ Template.dayPhase.helpers({
 */
 
 Template.playerVote.helpers({
-  players: getNonCurrentPlayers,
-  isReady: function () {
-    var player = getCurrentPlayer();
-    return player.isReady;
-  }
+  players: getNonCurrentPlayers
 });
 
 Template.playerVote.events({
@@ -796,13 +790,6 @@ Template.playerVote.events({
         console.error("error Voting");
       }
     });
-  },
-  'click .btn-player-ready': function (event) {
-    var player = getCurrentPlayer();
-    Players.update(player._id, {
-      $set: { isReady: true },
-    });
-    checkAllPlayerIsReady();
   }
 });
 
@@ -885,12 +872,12 @@ Template.heroWin.events ({
 */
 
 function resetPlayerVotingVariables (){
-  // Reset suspicionScoreCount, selectedPlayerID, isReady to default values after each voting phase
+  // Reset suspicionScoreCount, selectedPlayerID to default values after each voting phase
   var game = getCurrentGame();
   var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
   players.forEach(function (player) {
     Players.update(player._id, {
-      $set: { suspicionScoreCount: 0, selectedPlayerID: null, isReady: false }
+      $set: { suspicionScoreCount: 0, selectedPlayerID: null }
     });
   });
 }

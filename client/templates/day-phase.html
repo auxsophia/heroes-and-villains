@@ -11,13 +11,6 @@
   {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
 
   {{> gameLog}}
-
-  {{#if isGuardian}}
-    {{> guardianLog}}
-  {{/if}}
-  {{#if isTelepath}}
-    {{> telepathLog}}
-  {{/if}}
   <hr>
   {{#if isAlive}}
     {{> Template.dynamic template=whichView}}

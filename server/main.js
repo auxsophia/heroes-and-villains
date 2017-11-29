@@ -150,6 +150,7 @@ Games.find({
         gameLog: [],
         guardianLog: [],
         telepathLog: [],
+        villainLog: [],
         endTime: gameEndTime,
         paused: false,
         pausedTime: null
@@ -218,7 +219,6 @@ function checkWinCondition(gameID) {
 
 function processVote(gameID) {
   var game = Games.findOne(gameID);
-  var isReady = true;
   var nextState = null;
   var players = null;
 
@@ -238,7 +238,10 @@ function processVote(gameID) {
       if (isUnanimous(votes)) {
         var gameLog = game.gameLog;
         var pendingKilledPlayerID = votes[0];
-        Games.update(game._id, { $set: { state: "telepathNightPhase", gameLog: gameLog, pendingKill: pendingKilledPlayerID } });
+        var pendingKilledPlayerName = Players.findOne(pendingKilledPlayerID).name;
+        var villainLog = game.villainLog;
+        villainLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You tried to kill " + pendingKilledPlayerName });
+        Games.update(game._id, { $set: { state: "telepathNightPhase", villainLog: villainLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
         checkWinCondition(game._id);
       }
@@ -269,7 +272,7 @@ function processVote(gameID) {
         telepathVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'telepath' }, { 'isAlive': true }] }).fetch();
         var readPlayerID = telepathVote[0].selectedPlayerID;
         var readPlayerName = Players.findOne(readPlayerID).name;
-        var readPlayerRole = Players.findOne(readPlayerID).role;
+        var readPlayerRole = Players.findOne(readPlayerID).role == 'villain' ? "Villain" : "Hero";
         console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
         var telepathLog = game.telepathLog;
         telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: readPlayerName + " is a " + readPlayerRole});
