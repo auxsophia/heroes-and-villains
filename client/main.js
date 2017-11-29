@@ -721,18 +721,18 @@ Template.villainNightPhase.events({
       Games.update(game._id, { $set: { paused: true, pausedTime: currentServerTime } });
     }
   },
-  'click .player-name': function (event) {
-    event.currentTarget.className = 'player-name-striked';
-  },
-  'click .player-name-striked': function (event) {
-    event.currentTarget.className = 'player-name';
-  },
-  'click .location-name': function (event) {
-    event.target.className = 'location-name-striked';
-  },
-  'click .location-name-striked': function (event) {
-    event.target.className = 'location-name';
-  },
+  // 'click .player-name': function (event) {
+  //   event.currentTarget.className = 'player-name-striked';
+  // },
+  // 'click .player-name-striked': function (event) {
+  //   event.currentTarget.className = 'player-name';
+  // },
+  // 'click .location-name': function (event) {
+  //   event.target.className = 'location-name-striked';
+  // },
+  // 'click .location-name-striked': function (event) {
+  //   event.target.className = 'location-name';
+  // },
   'click .btn-test': function (event) {
     var game = getCurrentGame();
     Games.update(game._id, { $set: { state: 'telepathNightPhase' } });

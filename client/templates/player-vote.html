@@ -6,8 +6,7 @@
        {{#if isAlive}}
       <li>
         <div class="player-name">
-          <input type="hidden" name="player-id" value="{{_id}}"/>
-          <input type="radio" name="player"/> <label for="player">{{ name }} ({{_ (concat "ui." role)}})</label>
+           <input type="radio" name="player" id="{{_id}}"/> <label for="{{_id}}">{{ name }} ({{_ (concat "ui." role)}})</label>
         </div>
       </li>
       {{/if}}
