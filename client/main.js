@@ -393,6 +393,14 @@ Template.registerHelper('soundMessage', (name) => {
     var s = new buzz.sound('/sounds/day_instructions.m4a');
     s.play();
     break;
+    case 'heroesWin':
+    var s = new buzz.sound('/sounds/heroes_win.m4a');
+    s.play();
+    break;
+    case 'villainsWin':
+    var s = new buzz.sound('/sounds/villains_win.m4a');
+    s.play();
+    break;
   }
 
 });

@@ -207,11 +207,9 @@ function checkWinCondition(gameID) {
   var heroAliveCount = Players.find({ $and: [{ 'gameID': gameID }, { 'isVillain': false }, { 'isAlive': true }] }).count();
   console.log("Checking Win - Heroes: " + heroAliveCount + ", Villains: " + villainAliveCount);
   if (villainAliveCount === 0) {
-    Games.update(gameID, { $set: { state: "heroWin" } });
     return "heroWin";
   }
   if (heroAliveCount <= villainAliveCount) {
-    Games.update(gameID, { $set: { state: "villainWin" } });
     return "villainWin";
   }
   return false;
