@@ -227,12 +227,44 @@ function checkWinCondition(gameID) {
 function getRandomNumberBetween(low, high) {
   return Math.random() * (high-low) + low;
 }
+function wrapUpNightPhase(game) {
+  clearVotes(game._id);
+  var gameLog = game.gameLog;
+  var didGameEnd = checkWinCondition(game._id);
+  if (didGameEnd){
+    var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
+    gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: whoWon + " Win!" })
+    Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog } });
+  } else {
+    Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog} });
+  }
+}
+
+function wrapUpFailedGuardianPhase(game, guardianLogEntry) {
+  var playerKilledName = Players.findOne(game.pendingKill).name;
+  var guardianLog = game.guardianLog;
+  var gameLog = game.gameLog;
+  guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: guardianLogEntry});
+  Players.update(game.pendingKill, {
+    $set: { isAlive: false },
+  });
+  gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: playerKilledName + " was killed." });
+  Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, guardianLog: guardianLog} });
+  wrapUpNightPhase(game);
+}
 
 function wrapUpTelepathPhase(game, telepathLogEntry) {
   var telepathLog = game.telepathLog;
   telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: telepathLogEntry});
   Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
   clearVotes(game._id);
+  
+  // Must advance here if guardian is dead also!
+  if (guardianIsDead(game._id)) {
+    Meteor.setTimeout(function() {
+      wrapUpFailedGuardianPhase(game, "You were dead, did nothing.");
+    }, getRandomNumberBetween(12000,17000));
+  }
 }
 
 function processVote(gameID) {
@@ -278,6 +310,12 @@ function processVote(gameID) {
           var readPlayerRole = Players.findOne(readPlayerID).role == 'villain' ? "Villain" : "Hero";
           console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
           wrapUpTelepathPhase(game, readPlayerName + " is a " + readPlayerRole);
+           // if Guardian is dead set timer for end of telapath round
+        if (guardianIsDead(game._id)) {
+          Meteor.setTimeout(function() {
+            wrapUpTelepathPhase(game, "You were dead, did nothing.");
+          }, getRandomNumberBetween(12000,17000));
+        }
           break;
     case "guardianNightPhase":
       // Consider votes from villains who are ready and alive
@@ -289,23 +327,11 @@ function processVote(gameID) {
       if (protectedPlayerID == game.pendingKill) {
         guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You rescued " + protectedPlayerName });
         gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "No hero was killed" });
+        Games.update(game._id, { $set: { state: "guardianNightPhase", gameLog: gameLog, guardianLog: guardianLog} });
       } else {
-        var playerKilledName = Players.findOne(game.pendingKill).name;
-        guardianLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You chose " + protectedPlayerName + " but " + playerKilledName + " was killed." });
-        gameLog.push({ phase: "Night", roundNumber: game.roundNumber, message: playerKilledName + " was killed." });
-        Players.update(game.pendingKill, {
-          $set: { isAlive: false },
-        });
+        wrapUpFailedGuardianPhase(game, "You chose " + protectedPlayerName + " but " + playerKilledName + " was killed." );
       }
-      clearVotes(game._id);
-      var didGameEnd = checkWinCondition(game._id);
-      if (didGameEnd){
-        var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
-        gameLog.push({ phase: "Day", roundNumber: game.roundNumber, message: whoWon + " Win!" })
-        Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog, guardianLog: guardianLog } });
-      } else {
-        Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
-      }
+      wrapUpNightPhase(game);
 
       break;
     case "dayPhase":
