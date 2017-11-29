@@ -223,7 +223,7 @@ function processVote(gameID) {
   var players = null;
 
   switch (game.state) {
-    case "nightPhaseVillain":
+    case "villainNightPhase":
       // Consider votes from villains who are ready and alive
       votingVillains = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'villain' }, { 'isAlive': true }] }).fetch();
       // must be unanimous
@@ -300,7 +300,7 @@ function processVote(gameID) {
           $set: { isAlive: false },
         });
         clearVotes();
-        Games.update(gameID, { $set: { state: "nightPhaseVillain", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
+        Games.update(gameID, { $set: { state: "villainNightPhase", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
         checkWinCondition(gameID);
       } else {
 

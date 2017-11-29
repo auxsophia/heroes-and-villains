@@ -120,6 +120,31 @@ getAllCurrentPlayers = function () {
 
   return players;
 }
+getPlayersForVoteList = function () {
+  var game = getCurrentGame();
+  var currentPlayer = getCurrentPlayer();
+
+  if (!game) {
+    return null;
+  }
+  if (game.state == "villainNightPhase"){
+    var players = Players.find({ 'gameID': game._id, 'isAlive': true, 'isVillain': false}, { 'sort': { 'createdAt': 1 } }).fetch();
+  } else if (game.state == "guardianNightPhase"){
+    var players = Players.find({ 'gameID': game._id, 'isAlive': true}, { 'sort': { 'createdAt': 1 } }).fetch();
+  } else if (game.state == "telepathNightPhase"){
+    var players = Players.find({ 'gameID': game._id, 'isAlive': true, _id: { $ne: currentPlayer._id}}, { 'sort': { 'createdAt': 1 } }).fetch();
+  } else if (game.state == "dayPhase"){
+    var players = Players.find({ 'gameID': game._id, 'isAlive': true, _id: { $ne: currentPlayer._id}}, { 'sort': { 'createdAt': 1 } }).fetch();
+  }
+
+  players.forEach(function (player) {
+    if (player._id === currentPlayer._id) {
+      player.isCurrent = true;
+    }
+  });
+
+  return players;
+}
 
 // Get all but the current player
 getNonCurrentPlayers = function () {
@@ -207,8 +232,8 @@ function trackGameState() {
 
   if (game.state === "roleView") {
     Session.set("currentView", "roleView");
-  } else if (game.state === "nightPhaseVillain") {
-    Session.set("currentView", "nightPhaseVillain");
+  } else if (game.state === "villainNightPhase") {
+    Session.set("currentView", "villainNightPhase");
   } else if (game.state === "guardianNightPhase") {
     Session.set("currentView", "guardianNightPhase");
   } else if (game.state === "telepathNightPhase") {
@@ -315,6 +340,12 @@ Template.footer.events({
 Template.registerHelper('concat', (string1, string2) => {
   return string1 + string2;
 });
+Template.registerHelper('game', () => {
+    return getCurrentGame();
+});
+Template.registerHelper('player', () => {
+    return getCurrentPlayer();
+});
 Template.registerHelper('currentPlayerName', () => {
     return getCurrentPlayer().name
 });
@@ -341,9 +372,6 @@ Template.registerHelper('telepathLog', () => {
 });
 Template.registerHelper('isTelepath', () => {
   return getCurrentPlayer().role == 'telepath';
-});
-Template.registerHelper('currentPlayer', () => {
-  return getCurrentPlayer();
 });
 
 
@@ -615,7 +643,7 @@ function goToNight() {
   game = getCurrentGame();
   Games.update(game._id, {
     $set: {
-      state: 'nightPhaseVillain'
+      state: 'villainNightPhase'
     }
   });
 }
@@ -633,62 +661,20 @@ Template.roleView.events({
 
 })
 
-Template.nightPhaseVillain.helpers({
-  game: getCurrentGame,
-  player: getCurrentPlayer,
-  players: getAllCurrentPlayers
-  // isVillain: function () {
-  //   var player = getCurrentPlayer();
-  //   if(player.role === 'villain') {
-  //     return true;
-  //   }
-  //   return false;
-  // },
-  // isGuardian: function () {
-  //   var player = getCurrentPlayer();
-  //   if(player.role === 'guardian') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-  // isTelepath: function () {
-  //   var player = getCurrentPlayer();
-  //   if(player.role === 'telepath') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-});
+// Template.villainNightPhase.helpers({
+//   game: getCurrentGame,
+//   player: getCurrentPlayer,
+// });
 
-Template.guardianNightPhase.helpers({
-  game: getCurrentGame,
-  player: getCurrentPlayer,
-  players: getAllCurrentPlayers
-  // isGuardian: function () {
-  //   var player = getCurrentPlayer();
-  //   if(player.role === 'guardian') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-});
+// Template.guardianNightPhase.helpers({
+//   game: getCurrentGame,
+//   player: getCurrentPlayer,
+// });
 
-Template.telepathNightPhase.helpers({
-  game: getCurrentGame,
-  player: getCurrentPlayer,
-  players: getAllCurrentPlayers
-  // isReady: function () {
-  //   var player = getCurrentPlayer();
-  //   return player.isReady;
-  // },
-  // isTelepath: function () {
-  //   var player = getCurrentPlayer();
-  //   if(player.role === 'telepath') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-});
+// Template.telepathNightPhase.helpers({
+//   game: getCurrentGame,
+//   player: getCurrentPlayer,
+// });
 
 Template.telepathNightPhase.events({
   'change input:radio[name=player]': function () {
@@ -701,7 +687,7 @@ Template.telepathNightPhase.events({
   }
 });
 
-Template.nightPhaseVillain.events({
+Template.villainNightPhase.events({
   'click .btn-leave': leaveGame,
   'click .btn-end': function () {
     GAnalytics.event("game-actions", "gameend");
@@ -772,7 +758,7 @@ Template.dayPhase.helpers({
 */
 
 Template.playerVote.helpers({
-  players: getNonCurrentPlayers
+  players: getPlayersForVoteList
 });
 
 Template.playerVote.events({
