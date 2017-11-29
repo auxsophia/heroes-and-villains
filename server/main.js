@@ -202,6 +202,15 @@ function clearVotes(gameID) {
   });
 }
 
+function guardianIsDead(gameID) {
+  var guardian = Players.findOne({ 'gameID': gameID, 'role': 'guardian'})
+  return !guardian.isAlive;
+}
+function telepathIsDead(gameID) {
+  var telepath = Players.findOne({ 'gameID': gameID, 'role': 'telepath'})
+  return !telepath.isAlive;
+}
+
 function checkWinCondition(gameID) {
   var villainAliveCount = Players.find({ $and: [{ 'gameID': gameID }, { 'isVillain': true }, { 'isAlive': true }] }).count();
   var heroAliveCount = Players.find({ $and: [{ 'gameID': gameID }, { 'isVillain': false }, { 'isAlive': true }] }).count();
@@ -213,6 +222,17 @@ function checkWinCondition(gameID) {
     return "villainWin";
   }
   return false;
+}
+
+function getRandomNumberBetween(low, high) {
+  return Math.random() * (high-low) + low;
+}
+
+function wrapUpTelepathPhase(game, telepathLogEntry) {
+  var telepathLog = game.telepathLog;
+  telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: telepathLogEntry});
+  Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
+  clearVotes(game._id);
 }
 
 function processVote(gameID) {
@@ -241,6 +261,13 @@ function processVote(gameID) {
         villainLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You tried to kill " + pendingKilledPlayerName });
         Games.update(game._id, { $set: { state: "telepathNightPhase", villainLog: villainLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
+
+        // if Telepath is dead set timer for end of telapath round
+        if (telepathIsDead(game._id)) {
+          Meteor.setTimeout(function() {
+            wrapUpTelepathPhase(game, "You were dead, did nothing.");
+          }, getRandomNumberBetween(12000,17000));
+        }
       }
       break;
       case "telepathNightPhase":
@@ -250,10 +277,7 @@ function processVote(gameID) {
           var readPlayerName = Players.findOne(readPlayerID).name;
           var readPlayerRole = Players.findOne(readPlayerID).role == 'villain' ? "Villain" : "Hero";
           console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
-          var telepathLog = game.telepathLog;
-          telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: readPlayerName + " is a " + readPlayerRole});
-          Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
-          clearVotes(game._id);
+          wrapUpTelepathPhase(game, readPlayerName + " is a " + readPlayerRole);
           break;
     case "guardianNightPhase":
       // Consider votes from villains who are ready and alive

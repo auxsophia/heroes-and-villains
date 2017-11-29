@@ -141,12 +141,17 @@
     </div>
   </div>
 
+{{#if isAlive}}
   {{#if isVillain}}
   {{> Template.dynamic template=whichView}}
   {{> playerVote}}
   {{else}}
   {{_ "ui.playerAsleep" }}
   {{/if}}
+{{else}}
+   You are dead/locked up
+{{/if}}
+
 
   <div class="u-cf"></div>
 
@@ -178,11 +183,15 @@
 
     </div>
   </div>
-  {{#if isGuardian}}
+  {{#if isAlive}}
+    {{#if isGuardian}}
     {{> Template.dynamic template=whichView}}
     {{> playerVote}}
-  {{else}}
+    {{else}}
     {{_ "ui.playerAsleep" }}
+    {{/if}}
+  {{else}}
+     You are dead/locked up
   {{/if}}
 
   <div class="u-cf"></div>
@@ -214,15 +223,18 @@
 
     </div>
   </div>
+  {{#if isAlive}}
   {{#if isTelepath}}
-    {{> Template.dynamic template=whichView}}
-    {{> telepathLog}}
-    {{> playerVote}}
-    <p>Choose a player to mindread.</p>
+      {{> Template.dynamic template=whichView}}
+      {{> telepathLog}}
+      {{> playerVote}}
+      <p>Choose a player to mindread.</p>
   {{else}}
     {{_ "ui.playerAsleep" }}
   {{/if}}
-
+{{else}}
+ You are dead/locked up
+ {{/if}}
   <div class="u-cf"></div>
 
   <hr>

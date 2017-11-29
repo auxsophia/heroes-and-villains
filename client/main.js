@@ -373,6 +373,9 @@ Template.registerHelper('telepathLog', () => {
 Template.registerHelper('isTelepath', () => {
   return getCurrentPlayer().role == 'telepath';
 });
+Template.registerHelper('isAlive', () => {
+  return getCurrentPlayer().isAlive;
+});
 
 
 Template.registerHelper('soundMessage', (name) => {
