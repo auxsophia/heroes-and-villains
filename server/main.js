@@ -243,7 +243,6 @@ function processVote(gameID) {
         villainLog.push({ phase: "Night", roundNumber: game.roundNumber, message: "You tried to kill " + pendingKilledPlayerName });
         Games.update(game._id, { $set: { state: "telepathNightPhase", villainLog: villainLog, pendingKill: pendingKilledPlayerID } });
         clearVotes(game._id);
-        checkWinCondition(game._id);
       }
       break;
     case "guardianNightPhase":
@@ -266,6 +265,7 @@ function processVote(gameID) {
       }
       Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
       clearVotes(game._id);
+      checkWinCondition(game._id);
       break;
     case "telepathNightPhase":
         // Consider votes from telepaths (currently only one telepath at a time) who are ready and alive

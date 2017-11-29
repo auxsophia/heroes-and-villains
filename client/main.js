@@ -211,10 +211,6 @@ function trackGameState() {
     Session.set("currentView", "nightPhaseVillain");
   } else if (game.state === "guardianNightPhase") {
     Session.set("currentView", "guardianNightPhase");
-  // } else if(game.state === "summaryNightPhase") {
-  //   Session.set("currentView", "summaryNightPhase")
-  // } else if(game.state === "summaryDayPhase") {
-  //   Session.set("currentView", "summaryDayPhase")
   } else if (game.state === "telepathNightPhase") {
     Session.set("currentView", "telepathNightPhase");
   } else if (game.state === "dayPhase") {
@@ -792,64 +788,6 @@ Template.playerVote.events({
     });
   }
 });
-
-// If players are ready transition to appropriate state
-
-/*
-      player-vote end
-*/
-
-
-/*
-      summary-night-phase start
-*/
-Template.summaryNightPhase.nameOfKilledPlayer = function (){
-  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
-  return player.name;
-}
-
-// template.summarynightphase.rendered = function() {
-//   // set player with highest suspicionscorecount to not alive before resetting voting variables
-//   // show results screen for 5 seconds before switching to day phase
-//   meteor.settimeout(function (){
-//     setplayernotalive();
-//     resetplayervotingvariables();
-//     if(!iswincondition()){
-//       game = getcurrentgame();
-//       games.update(game._id, { $set: { state: "dayphase" } });
-//     }
-//   }, 5000);
-// }
-
-/*
-      summary-night-phase end
-*/
-
-
-/*
-      summary-day-phase start
-*/
-Template.summaryDayPhase.nameOfKilledPlayer = function (){
-  var player = Players.findOne({},{sort:{suspicionScoreCount:-1}});
-  return player.name;
-}
-
-Template.summaryDayPhase.rendered = function() {
-  // Set player with highest suspicionScoreCount to not alive before resetting voting variables
-  // Show results screen for 5 seconds before switching to day phase
-  Meteor.setTimeout(function (){
-    setPlayerNotAlive();
-    resetPlayerVotingVariables();
-    if(!isWinCondition()){
-      game = getCurrentGame();
-      Games.update(game._id, { $set: { state: "nightPhaseVillain" } });
-    }
-  }, 5000);
-}
-
-/*
-      summary-day-phase end
-*/
 
 /*
     end-game start
