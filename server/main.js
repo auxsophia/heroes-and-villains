@@ -208,11 +208,11 @@ function checkWinCondition(gameID) {
   console.log("Checking Win - Heroes: " + heroAliveCount + ", Villains: " + villainAliveCount);
   if (villainAliveCount === 0) {
     Games.update(gameID, { $set: { state: "heroWin" } });
-    return true;
+    return "heroWin";
   }
   if (heroAliveCount <= villainAliveCount) {
     Games.update(gameID, { $set: { state: "villainWin" } });
-    return true;
+    return "villainWin";
   }
   return false;
 }
@@ -245,6 +245,18 @@ function processVote(gameID) {
         clearVotes(game._id);
       }
       break;
+      case "telepathNightPhase":
+          // Consider votes from telepaths (currently only one telepath at a time) who are ready and alive
+          telepathVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'telepath' }, { 'isAlive': true }] }).fetch();
+          var readPlayerID = telepathVote[0].selectedPlayerID;
+          var readPlayerName = Players.findOne(readPlayerID).name;
+          var readPlayerRole = Players.findOne(readPlayerID).role == 'villain' ? "Villain" : "Hero";
+          console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
+          var telepathLog = game.telepathLog;
+          telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: readPlayerName + " is a " + readPlayerRole});
+          Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
+          clearVotes(game._id);
+          break;
     case "guardianNightPhase":
       // Consider votes from villains who are ready and alive
       guardianVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'guardian' }, { 'isAlive': true }] }).fetch();
@@ -263,22 +275,17 @@ function processVote(gameID) {
           $set: { isAlive: false },
         });
       }
-      Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
       clearVotes(game._id);
-      checkWinCondition(game._id);
+      var didGameEnd = checkWinCondition(game._id);
+      if (didGameEnd){
+        var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
+        gameLog.push({ phase: "Day", roundNumber: game.roundNumber, message: whoWon + " Win!" })
+        Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog, guardianLog: guardianLog } });
+      } else {
+        Games.update(game._id, { $set: { state: "dayPhase", gameLog: gameLog, guardianLog: guardianLog } });
+      }
+
       break;
-    case "telepathNightPhase":
-        // Consider votes from telepaths (currently only one telepath at a time) who are ready and alive
-        telepathVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'telepath' }, { 'isAlive': true }] }).fetch();
-        var readPlayerID = telepathVote[0].selectedPlayerID;
-        var readPlayerName = Players.findOne(readPlayerID).name;
-        var readPlayerRole = Players.findOne(readPlayerID).role == 'villain' ? "Villain" : "Hero";
-        console.log("Telepath -- " + "Name: " + readPlayerName + ", role: " + readPlayerRole);
-        var telepathLog = game.telepathLog;
-        telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: readPlayerName + " is a " + readPlayerRole});
-        Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
-        clearVotes(game._id);
-        break;
     case "dayPhase":
       // Consider votes from everyone alive
       // Has majority voted for one player
@@ -300,10 +307,14 @@ function processVote(gameID) {
           $set: { isAlive: false },
         });
         clearVotes();
-        Games.update(gameID, { $set: { state: "villainNightPhase", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
-        checkWinCondition(gameID);
-      } else {
-
+        var didGameEnd = checkWinCondition(game._id);
+        if (didGameEnd){
+          var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
+          gameLog.push({ phase: "Day", roundNumber: game.roundNumber, message: whoWon + " Win!" })
+          Games.update(gameID, { $set: { state: didGameEnd, gameLog: gameLog } });
+        } else {
+          Games.update(gameID, { $set: { state: "villainNightPhase", roundNumber: game.roundNumber + 1, gameLog: gameLog } });
+        }
       }
   }
 }
