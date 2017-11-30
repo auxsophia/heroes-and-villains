@@ -212,6 +212,13 @@ function resetUserState() {
   Session.set("playerID", null);
 }
 
+function clearVotes(gameID) {
+  var players = getAllCurrentPlayers(gameID);
+  players.forEach(function (player) {
+    Players.update(player._id, { $set: { selectedPlayerID: null, suspicionScoreCount: 0 } });
+  });
+}
+
 function trackGameState() {
   var gameID = Session.get("gameID");
   var playerID = Session.get("playerID");
@@ -229,6 +236,8 @@ function trackGameState() {
     Session.set("currentView", "startMenu");
     return;
   }
+
+  clearVotes(game._id);
 
   if (game.state === "roleView") {
     Session.set("currentView", "roleView");
