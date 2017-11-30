@@ -4,6 +4,17 @@ import './heroes-villains.html';
 import './test-helpers.html';
 import './templates/day-phase.html';
 
+/*
+*   Main game music
+*/
+var gameMusic = new buzz.sound('/sounds/game_music.mp3', {
+  preload: true,
+  loop: true
+});
+function initGameMusic(){
+  gameMusic.play();
+}
+
 Handlebars.registerHelper('toCapitalCase', function (str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
@@ -611,7 +622,7 @@ Template.lobby.events({
   'click .btn-leave': leaveGame,
   'click .btn-start': function () {
     GAnalytics.event("game-actions", "gamestart");
-
+    initGameMusic(); // Start background music only for moderator
     var game = getCurrentGame();
     Games.update(game._id, { $set: { moderator: getCurrentPlayer()._id, state: 'settingUp' } });
   },
@@ -824,3 +835,22 @@ function resetPlayerVotingVariables (){
     });
   });
 }
+
+/*
+*   Player header events
+*/
+
+
+Template.playerHeader.helpers ({
+  gameMusicVolume: gameMusic.getVolume()
+});
+Template.playerHeader.events ({
+  'click .btn-toggle-music': function () {
+    if(gameMusic.getVolume() === 0) {
+      gameMusic.setVolume(100);
+    } else {
+      gameMusic.decreaseVolume(25); 
+    }
+    $("span.btn-toggle-music").empty().html('Music:'+gameMusic.getVolume()+"%");
+  }
+});

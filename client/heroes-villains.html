@@ -249,6 +249,7 @@
   <div class="playerHeader">
     {{#if player.name}}<span class="name">Name: {{player.name}}</span>{{/if}}
     {{#if player.role}}<span class="role"> Role: {{player.role}}</span>{{/if}}
+    {{#if isModerator}}<span class="btn-toggle-music">Music:{{gameMusicVolume}}%</span>{{/if}}
   </div>
 </template>
 
