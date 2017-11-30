@@ -364,16 +364,16 @@ a {
 }
 
 .location-list {
-    -moz-column-count: 2;
-    -webkit-column-count: 2;
-    column-count: 2;
-    -moz-column-gap: 4px;
-    -webkit-column-gap: 4px;
-    column-gap: 4px;
+    // -moz-column-count: 2;
+    // -webkit-column-count: 2;
+    // column-count: 2;
+    // -moz-column-gap: 4px;
+    // -webkit-column-gap: 4px;
+    // column-gap: 4px;
 }
 
 .location-list li {
-    display: inline-block;
+    display: block;
     width: 100%;
     text-align: left;
     -moz-box-sizing:border-box;
@@ -399,13 +399,21 @@ a {
     overflow: hidden;
 }
 
+label {
+    display: inline-block;
+}
+
+span.votingForThisPlayer {
+    display: block;
+}
+
 .ingame-player-list li {
     text-align: left;
     -moz-box-sizing:border-box;
     -webkit-box-sizing:border-box;
     box-sizing:border-box;
-    width: 50%;
-    float: left;
+    // width: 50%;
+    // float: left;
     list-style-type: none;
     padding: 0 4px 0 0;
     margin: 0 0 4px 0;
