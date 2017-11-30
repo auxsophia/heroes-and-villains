@@ -8,7 +8,8 @@
   {{ soundMessage "dayInstructions"}}
   {{/if}}
 
-  {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}
+  {{_ "ui.suspicionScoreLabel" }}: {{suspicionScoreCount}}<br/>
+Voting for you: {{votingForThisPlayer player._id}}
 
   {{> gameLog}}
   <hr>
