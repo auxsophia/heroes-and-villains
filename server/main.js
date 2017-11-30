@@ -322,6 +322,7 @@ function processVote(gameID) {
       guardianVote = Players.find({ $and: [{ 'gameID': game._id }, { 'role': 'guardian' }, { 'isAlive': true }] }).fetch();
       var protectedPlayerID = guardianVote[0].selectedPlayerID;
       var protectedPlayerName = Players.findOne(protectedPlayerID).name;
+      var playerKilledName = Players.findOne(game.pendingKill).name;
       var gameLog = game.gameLog;
       var guardianLog = game.guardianLog;
       if (protectedPlayerID == game.pendingKill) {
