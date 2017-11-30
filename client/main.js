@@ -683,17 +683,6 @@ Template.roleView.events({
 
 })
 
-Template.telepathNightPhase.events({
-  'change input:radio[name=player]': function () {
-    var vSelectedPlayerID = $(this)[0]._id;
-    // Keep track of the current players selection
-    var player = getCurrentPlayer();
-    Players.update(player._id, {
-      $set: { selectedPlayerID: vSelectedPlayerID },
-    });
-  }
-});
-
 Template.villainNightPhase.events({
   'click .btn-leave': leaveGame,
   'click .btn-end': restartGame,

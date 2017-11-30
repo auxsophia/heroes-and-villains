@@ -157,10 +157,12 @@
 
   <hr>
 
-  <!-- <div class="button-container">
+  {{#if isModerator}}
+  <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
-  </div> -->
+    <!-- <button class="btn-leave">{{_ "ui.leave game" }}</button> -->
+  </div>
+  {{/if}}
 </template>
 
 <template name="guardianNightPhase">
@@ -198,10 +200,12 @@
 
   <hr>
 
-  <!-- <div class="button-container">
+  {{#if isModerator}}
+  <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
-  </div> -->
+    <!-- <button class="btn-leave">{{_ "ui.leave game" }}</button> -->
+  </div>
+  {{/if}}
 </template>
 
 <template name="telepathNightPhase">
@@ -213,36 +217,37 @@
   {{#if isModerator}}
   {{ soundMessage "telepathInstructions"}}
   {{/if}}
-
+  
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
     <div class="status-container-content">{{_ "ui.you are a"}}
       <div class="player-status">
         {{_ (concat "ui." player.role)}}
       </div>
-
+      
     </div>
   </div>
   {{#if isAlive}}
   {{#if isTelepath}}
-      {{> Template.dynamic template=whichView}}
-      {{> telepathLog}}
-      {{> playerVote}}
-      <p>Choose a player to mindread.</p>
+  {{> Template.dynamic template=whichView}}
+  {{> playerVote}}
+  <p>Choose a player to mindread.</p>
   {{else}}
-    {{_ "ui.playerAsleep" }}
+  {{_ "ui.playerAsleep" }}
   {{/if}}
-{{else}}
- You are dead/locked up
- {{/if}}
+  {{else}}
+  You are dead/locked up
+  {{/if}}
   <div class="u-cf"></div>
-
+  
   <hr>
-
-  <!-- <div class="button-container">
+  
+  {{#if isModerator}}
+  <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
-  </div> -->
+    <!-- <button class="btn-leave">{{_ "ui.leave game" }}</button> -->
+  </div>
+  {{/if}}
 </template>
 
 <template name="playerHeader">
