@@ -376,6 +376,10 @@ Template.registerHelper('isTelepath', () => {
 Template.registerHelper('isAlive', () => {
   return getCurrentPlayer().isAlive;
 });
+Template.registerHelper('votingForThisPlayer', (playerID) => {
+  var playerNames = Players.find({gameID: getCurrentGame()._id, selectedPlayerID: playerID}).map(x=>x.name);
+  return playerNames.join(', ');
+});
 
 
 Template.registerHelper('soundMessage', (name) => {
