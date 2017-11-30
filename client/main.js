@@ -308,17 +308,6 @@ FlashMessages.configure({
   autoScroll: false
 });
 
-// Template.main.rendered = function () {
-//   $.getScript("//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", function () {
-//     var ads, adsbygoogle;
-//     ads = '<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-3450817379541922" data-ad-slot="4101511012" data-ad-format="auto"></ins>';
-//     $('.adspace').html(ads);
-//     return (adsbygoogle = window.adsbygoogle || []).push({});
-//   });
-// };
-
-
-
 Template.main.helpers({
   whichView: function () {
     return Session.get('currentView');
@@ -694,21 +683,6 @@ Template.roleView.events({
 
 })
 
-// Template.villainNightPhase.helpers({
-//   game: getCurrentGame,
-//   player: getCurrentPlayer,
-// });
-
-// Template.guardianNightPhase.helpers({
-//   game: getCurrentGame,
-//   player: getCurrentPlayer,
-// });
-
-// Template.telepathNightPhase.helpers({
-//   game: getCurrentGame,
-//   player: getCurrentPlayer,
-// });
-
 Template.telepathNightPhase.events({
   'change input:radio[name=player]': function () {
     var vSelectedPlayerID = $(this)[0]._id;
@@ -739,18 +713,6 @@ Template.villainNightPhase.events({
       Games.update(game._id, { $set: { paused: true, pausedTime: currentServerTime } });
     }
   },
-  // 'click .player-name': function (event) {
-  //   event.currentTarget.className = 'player-name-striked';
-  // },
-  // 'click .player-name-striked': function (event) {
-  //   event.currentTarget.className = 'player-name';
-  // },
-  // 'click .location-name': function (event) {
-  //   event.target.className = 'location-name-striked';
-  // },
-  // 'click .location-name-striked': function (event) {
-  //   event.target.className = 'location-name';
-  // },
   'click .btn-test': function (event) {
     var game = getCurrentGame();
     Games.update(game._id, { $set: { state: 'telepathNightPhase' } });
@@ -824,22 +786,6 @@ Template.heroWin.events ({
 /*
     Utility Functions
 */
-
-function resetPlayerVotingVariables (){
-  // Reset suspicionScoreCount, selectedPlayerID to default values after each voting phase
-  var game = getCurrentGame();
-  var players = Players.find({ 'gameID': game._id }, { 'sort': { 'createdAt': 1 } }).fetch();
-  players.forEach(function (player) {
-    Players.update(player._id, {
-      $set: { suspicionScoreCount: 0, selectedPlayerID: null }
-    });
-  });
-}
-
-/*
-*   Player header events
-*/
-
 
 Template.playerHeader.helpers ({
   gameMusicVolume: gameMusic.getVolume()

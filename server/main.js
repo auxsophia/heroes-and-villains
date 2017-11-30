@@ -196,9 +196,15 @@ getAllCurrentPlayers = function (gameID) {
 }
 
 function clearVotes(gameID) {
+  console.log("Clearing Votes");
   var players = getAllCurrentPlayers(gameID);
   players.forEach(function (player) {
     Players.update(player._id, { $set: { selectedPlayerID: null, suspicionScoreCount: 0 } });
+  });
+  console.log("players with non-null selectedPlayerID:")
+  var stillVotingPlayers = Players.find({gameID: gameID, selectedPlayerID:{$ne: null}});
+  stillVotingPlayers.forEach(function(player) {
+    console.log(player.name + " voting for: " +Players.findOne(player.selectedPlayerID).name);
   });
 }
 
@@ -232,7 +238,7 @@ function wrapUpDayOrNightPhase(game, currentPhase, nextPhase) {
   var gameLog = game.gameLog;
   var didGameEnd = checkWinCondition(game._id);
   if (didGameEnd){
-    var whoWon = didGameEnd == "heroesWin" ? "Heroes" : "Villains";
+    var whoWon = didGameEnd == "heroWin" ? "Heroes" : "Villains";
     gameLog.push({ phase: currentPhase, roundNumber: game.roundNumber, message: whoWon + " Win!" })
     Games.update(game._id, { $set: { state: didGameEnd, gameLog: gameLog } });
   } else {
