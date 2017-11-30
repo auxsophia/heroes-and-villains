@@ -256,8 +256,8 @@ function wrapUpFailedGuardianPhase(game, guardianLogEntry) {
 function wrapUpTelepathPhase(game, telepathLogEntry) {
   var telepathLog = game.telepathLog;
   telepathLog.push({ phase: "Night", roundNumber: game.roundNumber, message: telepathLogEntry});
-  clearVotes(game._id);
   Games.update(game._id, { $set: { state: "guardianNightPhase", telepathLog: telepathLog} });
+  clearVotes(game._id);
   
   // Must advance here if guardian is dead also!
   if (guardianIsDead(game._id)) {
