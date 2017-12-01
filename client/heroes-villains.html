@@ -27,7 +27,7 @@
 
 <template name="startMenu">
   <div class="main-menu">
-    <h4>{{_ "ui.welcome to heroes and villains" }}</h4>
+    <h4><span class='hero-txt'>Heros</span> and <span class='villain-txt'>Villains</span></h4>
 
     <hr>
 
@@ -124,7 +124,7 @@
 <template name="villainNightPhase">
   {{> playerHeader}}
   <h4>
-    It is night...
+    <span class='villain-txt'>It is night</span>...
   </h4>
 
   {{#if isModerator}}
@@ -168,7 +168,7 @@
 <template name="guardianNightPhase">
   {{> playerHeader}}
   <h4>
-    It is night...
+    <span class='villain-txt'>It is night</span>...
   </h4>
 
   {{#if isModerator}}
@@ -211,7 +211,7 @@
 <template name="telepathNightPhase">
   {{> playerHeader}}
   <h4>
-    It is night...
+    <span class='villain-txt'>It is night</span>...
   </h4>
   {{> gameLog}}
   {{#if isModerator}}
@@ -323,7 +323,7 @@
   <h4>
     {{#if isLoading }}
     <span class="spinner"></span>
-    {{else}}{{_ "ui.welcome to heroes and villains" }} {{/if}}
+    {{else}}<span class='hero-txt'>Heros</span> and <span class='villain-txt'>Villains</span>{{/if}}
   </h4>
 
   <hr>
@@ -344,7 +344,7 @@
   <h4>
     {{#if isLoading }}
     <span class="spinner"></span>
-    {{else}} {{_ "ui.welcome to heroes and villains" }} {{/if}}
+    {{else}}<span class='hero-txt'>Heros</span> and <span class='villain-txt'>Villains</span>{{/if}}
   </h4>
 
   <hr>

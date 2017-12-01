@@ -263,7 +263,7 @@ function trackGameState() {
 function leaveGame() {
   GAnalytics.event("game-actions", "gameleave");
   var player = getCurrentPlayer();
-
+  gameMusic.stop();
   Session.set("currentView", "startMenu");
   Players.remove(player._id);
 
@@ -638,7 +638,7 @@ Template.lobby.rendered = function (event) {
 
 var restartGame= function () {
   GAnalytics.event("game-actions", "gameend");
-
+  gameMusic.stop();
   var game = getCurrentGame();
   Games.update(game._id, { $set: { state: 'waitingForPlayers' } });
 }
