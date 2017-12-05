@@ -60,26 +60,6 @@
     <span>{{ game.accessCode }}</span>
   </div>
 
-  <div class="access-buttons">
-    <a class="access-button btn-toggle-qrcode" href="javascript:void(0);">
-      <i class="fa fa-qrcode"></i>
-    </a>
-
-    <span class="access-button-separator"></span>
-
-    <a class="access-button btn-send-access-code-email" href='mailto:?subject={{_ "ui.join my heres and villains game" }}&body={{ accessLink }}'>
-      <i class="fa fa-envelope-o"></i>
-    </a>
-  </div>
-
-  <div class="qrcode-container" style="display: none;">
-    <div id="qrcode" class="qrcode"></div>
-
-    <div id="access-link" class="access-link">
-      <a href="{{ accessLink }}">{{ accessLink }}</a>
-    </div>
-  </div>
-
   <hr>
 
   <ol class="lobby-player-list">
@@ -383,6 +363,6 @@
   <div class="footer">
     {{{_ "ui.footer" }}}
     <br>
-    <a href="https://github.com/mpcovcd/spyfall" target="_blank">https://github.com/mpcovcd/spyfall</a>
+    <a href="https://github.com/auxsophia/heroes-and-villains" target="_blank">https://github.com/auxsophia/heroes-and-villains</a>
   </div>
 </template>
