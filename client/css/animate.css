@@ -18,15 +18,16 @@
     position: relative;
     min-width: 1400px;
     height: 100%;
-    background: linear-gradient(to bottom, #aa5522 0%, #954a1e 100%);
-    background: #dededd; }
+    background: linear-gradient(to bottom, #dcdcdc 0%, #d3d3d3 100%);
+    background:rgb(243, 243, 243);
+  }
   
   .landscape:after {
     left: 0;
     bottom: 0;
     width: 100%;
     height: 150px;
-    background: linear-gradient(to bottom, transparent 0%, #aa5522 100%); }
+    background: linear-gradient(to bottom, transparent 0%, #dcdcdc 100%); }
   
   .inner {
     position: relative;
@@ -38,73 +39,73 @@
     position: absolute;
     bottom: 0;
     width: 130px;
-    background: #6a3515;
-    box-shadow: inset 2px 0 0 #4d260f, inset -2px 0 0 #4d260f, inset 0 3px 0 #4d260f, inset 0 -20px 0 #4d260f; }
+    background: #d3d3d3;
+    box-shadow: inset 2px 0 0 #c0c0c0, inset -2px 0 0 #c0c0c0, inset 0 3px 0 #c0c0c0, inset 0 -20px 0 #c0c0c0; }
   
   .building:nth-child(1):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(2):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(3):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(4):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(5):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(6):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(7):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.8); }
+    background: rgba(220,220,220, 0.8); }
   
   .building:nth-child(8):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(9):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(10):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(11):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(12):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(13):after {
     width: 100%;
     height: 100%;
-    background: rgba(170, 85, 34, 0.4); }
+    background: rgba(220,220,220, 0.4); }
   
   .building:nth-child(1) {
     width: 150px;
