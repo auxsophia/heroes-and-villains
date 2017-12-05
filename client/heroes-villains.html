@@ -10,12 +10,16 @@
   <link rel="stylesheet" href="css/normalize.css" type="text/css">
   <link rel="stylesheet" href="css/skeleton.css" type="text/css">
   <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <link rel="stylesheet" href="css/animate.css" type="text/css">
 </head>
 
 <body></body>
 
 <template name="main">
   <div class="adspace"></div>
+  <div id="city-background-1" class="animated slideInRight">{{> background }}</div>
+  <div id="city-background-2" class="animated slideInRight">{{> background }}</div>
+  <div id="city-background-3" class="animated slideInRight">{{> background }}</div>
   <div dir="{{ textDirection }}" class="container dir-{{textDirection}} lang-{{ language }}">
     <div class="main-content">
       {{> Template.dynamic template=whichView}}

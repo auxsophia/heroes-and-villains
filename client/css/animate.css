@@ -19,7 +19,7 @@
     min-width: 1400px;
     height: 100%;
     background: linear-gradient(to bottom, #aa5522 0%, #954a1e 100%);
-    background: #aa5522; }
+    background: #dededd; }
   
   .landscape:after {
     left: 0;
@@ -331,10 +331,62 @@
     top: 20px;
 }
 
-.background-container {
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    bottom: 0;
-    left: 0;
+#city-background-1{
+  position:fixed;
+  top:0;
+  right:-1400px;
+  width:100%;
+  height:100%;
+}
+
+#city-background-2{
+  position:fixed;
+  top:0;
+  right:0px;
+  width:100%;
+  height:100%;
+}
+
+#city-background-3{
+  position:fixed;
+  top:0;
+  right:1400px;
+  width:100%;
+  height:100%;
+}
+
+
+@keyframes slideInLeft {
+  from {
+    transform: translate3d(500, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translate3d(-500px, 0, 0);
+  }
+}
+
+.slideInLeft {
+  animation-name: slideInLeft;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(-500px, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translate3d(500, 0, 0);
+  }
+}
+
+.slideInRight {
+  animation-name: slideInRight;
+}
+
+.animated {
+  animation-duration: 25s;
+  animation-fill-mode: both;
 }

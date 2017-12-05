@@ -7,6 +7,18 @@ import './templates/day-phase.html';
 /*
 *   Main game music
 */
+setInterval(function(){
+  if($( "#city-background-2" ).hasClass( "slideInRight" )) {
+    $( "#city-background-1" ).removeClass( "slideInRight" ).addClass( "slideInLeft" );
+    $( "#city-background-2" ).removeClass( "slideInRight" ).addClass( "slideInLeft" );
+    $( "#city-background-3" ).removeClass( "slideInRight" ).addClass( "slideInLeft" );
+  } else {
+    $( "#city-background-1" ).removeClass( "slideInLeft" ).addClass( "slideInRight" );
+    $( "#city-background-2" ).removeClass( "slideInLeft" ).addClass( "slideInRight" );
+    $( "#city-background-3" ).removeClass( "slideInLeft" ).addClass( "slideInRight" );
+  }
+}, 25000);
+
 var gameMusic = new buzz.sound('/sounds/game_music.mp3', {
   preload: true,
   loop: true
