@@ -21,7 +21,8 @@ setInterval(function(){
 
 var gameMusic = new buzz.sound('/sounds/game_music.mp3', {
   preload: true,
-  loop: true
+  loop: true,
+  volume: 10
 });
 function initGameMusic(){
   gameMusic.play();
